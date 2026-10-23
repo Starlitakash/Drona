@@ -1,214 +1,245 @@
-
 import os
+import sys
 import uuid
 from pathlib import Path
+from typing import List, Dict, Any, Optional
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient, models
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from sentence_transformers import SentenceTransformer
+import pypdf
 
 load_dotenv()
 
 # ---------------- CONFIGURATION ----------------
 
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 STORAGE_PATH = os.getenv("QDRANT_STORAGE_PATH", "./qdrant_data")
 COLLECTION_NAME = "enterprise_knowledge"
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+VECTOR_DIM = 384
 
-# Local Qdrant database; no Docker required
-client = QdrantClient(path=STORAGE_PATH)
 
-# Text chunking configuration
+def get_qdrant_client() -> QdrantClient:
+    """Connects to Qdrant Cloud if credentials exist, otherwise falls back to local storage."""
+    if QDRANT_URL:
+        print(f"[Qdrant] Connecting to Qdrant Cloud: {QDRANT_URL}")
+        return QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+    print(f"[Qdrant] Using local storage path: {STORAGE_PATH}")
+    return QdrantClient(path=STORAGE_PATH)
+
+
+client = get_qdrant_client()
+
+# Text chunking configuration (~800 characters with 100 character overlap)
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=600,
+    chunk_size=800,
     chunk_overlap=100,
-    separators=["\n## ", "\n### ", "\n- ", "\n\n", "\n", " "]
+    separators=["\n## ", "\n### ", "\n\n", "\n", " "]
 )
+
+# Initialize SentenceTransformer locally
+print(f"[Embeddings] Loading local model: {EMBEDDING_MODEL_NAME}...")
+embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 
 # ---------------- COLLECTION SETUP ----------------
 
-def ensure_collection():
-    """Create the collection if it does not already exist."""
-
+def ensure_collection(recreate: bool = False):
+    """Create or recreate the Qdrant collection for 384-dimensional cosine embeddings."""
     if client.collection_exists(COLLECTION_NAME):
-        return
-
-    vector_size = client.get_embedding_size(EMBEDDING_MODEL)
+        if recreate:
+            client.delete_collection(COLLECTION_NAME)
+            print(f"[Qdrant] Deleted existing collection: {COLLECTION_NAME}")
+        else:
+            return
 
     client.create_collection(
         collection_name=COLLECTION_NAME,
         vectors_config=models.VectorParams(
-            size=vector_size,
+            size=VECTOR_DIM,
             distance=models.Distance.COSINE
         )
     )
+    print(f"[Qdrant] Created collection: {COLLECTION_NAME} (vector_dim={VECTOR_DIM}, metric=Cosine)")
 
-    print(f"Created collection: {COLLECTION_NAME}")
+
+# ---------------- DOCUMENT PARSER ----------------
+
+def parse_file(file_path: Path) -> str:
+    """Extracts text content from Markdown, Text, or PDF files."""
+    suffix = file_path.suffix.lower()
+    if suffix in [".md", ".txt"]:
+        return file_path.read_text(encoding="utf-8")
+    elif suffix == ".pdf":
+        reader = pypdf.PdfReader(str(file_path))
+        pages_text = [page.extract_text() or "" for page in reader.pages]
+        return "\n\n".join(pages_text)
+    return ""
 
 
-# ---------------- DOCUMENT INGESTION ----------------
+def infer_category(filename: str) -> str:
+    """Classifies document category based on filename prefixes and naming."""
+    fn = filename.lower()
+    if any(k in fn for k in ["sec", "password", "vulnerability", "access", "byod", "incident", "odc", "surveillance"]):
+        return "Security & Infrastructure"
+    elif any(k in fn for k in ["leave", "parental", "bereavement", "holiday", "posh", "grievance", "whistleblower", "handbook", "onboarding", "dress", "wellness", "eap"]):
+        return "People Operations & HR"
+    elif any(k in fn for k in ["travel", "expense", "payroll", "salary", "pf", "gratuity", "bonus", "card", "tax", "esop", "lease"]):
+        return "Finance & Payroll"
+    elif any(k in fn for k in ["sde", "api", "git", "ci_cd", "database", "observability", "testing", "ai", "cloud", "sre"]):
+        return "Engineering & Cloud"
+    elif any(k in fn for k in ["sales", "commission", "client", "nda", "msa", "procurement", "vendor"]):
+        return "Sales & Commercial"
+    elif any(k in fn for k in ["facility", "visitor", "lost", "seat", "meeting", "ehs", "emergency"]):
+        return "Workplace Solutions"
+    return "Corporate Governance"
 
-def ingest_all_documents(data_dir: str = "data"):
-    """Read Markdown/text files, split them and store them in Qdrant."""
 
-    base_path = Path(data_dir)
+# ---------------- INGESTION PIPELINE (PHASE 1) ----------------
 
+def ingest_all_documents(docs_dir: str = "docs", recreate: bool = True) -> Dict[str, int]:
+    """
+    Parses all .md, .txt, and .pdf documents from docs_dir, chunks them with
+    ~800 chars and 100 overlap, embeds with sentence-transformers/all-MiniLM-L6-v2,
+    and uploads points to Qdrant.
+    """
+    base_path = Path(docs_dir)
     if not base_path.exists():
-        print(f"Directory '{data_dir}' not found!")
-        return
+        raise FileNotFoundError(f"Documentation directory '{docs_dir}' not found!")
 
+    # Discover all supported documents
     files = sorted(
         list(base_path.rglob("*.md"))
         + list(base_path.rglob("*.txt"))
+        + list(base_path.rglob("*.pdf"))
     )
 
-    print(f"Found {len(files)} knowledge files.")
+    doc_count = len(files)
+    print(f"\n[Ingestion] Found {doc_count} documents in '{docs_dir}' for parsing.")
 
-    if not files:
-        print("No Markdown or text files to ingest.")
-        return
-
-    documents = []
-    metadata = []
-    point_ids = []
+    all_chunks: List[str] = []
+    all_payloads: List[Dict[str, Any]] = []
+    all_ids: List[str] = []
 
     for file_path in files:
-        category = (
-            file_path.parent.name
-            if file_path.parent != base_path
-            else "general"
-        )
-
         try:
-            content = file_path.read_text(encoding="utf-8")
-        except (OSError, UnicodeError) as error:
-            print(f"Could not read {file_path}: {error}")
+            content = parse_file(file_path)
+        except Exception as e:
+            print(f"[Parser Error] Could not parse {file_path.name}: {e}")
             continue
 
+        if not content.strip():
+            continue
+
+        category = infer_category(file_path.name)
         chunks = text_splitter.split_text(content)
 
         for idx, chunk in enumerate(chunks):
-            if not chunk.strip():
+            chunk_clean = chunk.strip()
+            if not chunk_clean:
                 continue
 
-            documents.append(chunk)
+            all_chunks.append(chunk_clean)
+            chunk_id = f"{file_path.stem}_{idx}"
+            
+            # Deterministic UUIDv5 for deduplication and idempotent updates
+            stable_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"{file_path.name}::{idx}"))
+            all_ids.append(stable_id)
 
-            metadata.append({
-                "text": chunk,
+            all_payloads.append({
+                "chunk_id": chunk_id,
                 "source": file_path.name,
                 "category": category,
-                "chunk_id": f"{file_path.stem}_{idx}",
+                "char_length": len(chunk_clean),
+                "text": chunk_clean,
                 "file_path": file_path.as_posix()
             })
 
-            # Deterministic ID: rerunning ingestion updates
-            # existing points instead of duplicating them.
-            stable_id = str(
-                uuid.uuid5(
-                    uuid.NAMESPACE_URL,
-                    f"{file_path.resolve()}::{idx}"
-                )
-            )
-            point_ids.append(stable_id)
+    total_chunks = len(all_chunks)
+    print(f"[Ingestion] Generated {total_chunks} chunks from {doc_count} documents (~800 chars, 100 overlap).")
 
-    if not documents:
-        print("No readable document chunks found.")
-        return
+    if total_chunks == 0:
+        print("[Ingestion Warning] No chunks to index.")
+        return {"documents": doc_count, "chunks": 0}
 
-    ensure_collection()
+    # Ensure collection exists
+    ensure_collection(recreate=recreate)
 
-    print(f"Ingesting {len(documents)} chunks into Qdrant...")
-
-    # The client generates embeddings from the documents
-    # using the configured FastEmbed model.
-    client.upload_collection(
-        collection_name=COLLECTION_NAME,
-        vectors=[
-            models.Document(
-                text=doc,
-                model=EMBEDDING_MODEL
-            )
-            for doc in documents
-        ],
-        ids=point_ids,
-        payload=metadata,
-        batch_size=32
+    # Compute dense embeddings locally using sentence-transformers
+    print(f"[Embeddings] Generating {total_chunks} dense embeddings via {EMBEDDING_MODEL_NAME}...")
+    embeddings = embedding_model.encode(
+        all_chunks,
+        batch_size=64,
+        show_progress_bar=True,
+        normalize_embeddings=True
     )
 
-    print("Ingestion complete!")
+    # Construct Qdrant points
+    points = [
+        models.PointStruct(
+            id=all_ids[i],
+            vector=embeddings[i].tolist(),
+            payload=all_payloads[i]
+        )
+        for i in range(total_chunks)
+    ]
+
+    # Upload to Qdrant in batches
+    batch_size = 100
+    print(f"[Qdrant] Uploading {total_chunks} points in batches of {batch_size}...")
+    for i in range(0, total_chunks, batch_size):
+        batch = points[i:i + batch_size]
+        client.upsert(
+            collection_name=COLLECTION_NAME,
+            points=batch
+        )
+
+    print("\n" + "=" * 65)
+    print(">>> INGESTION COMPLETE")
+    print(f"Total Documents Ingested: {doc_count}")
+    print(f"Total Chunks Stored:      {total_chunks}")
+    print(f"Target Collection:        {COLLECTION_NAME}")
+    print("=" * 65 + "\n")
+
+    return {"documents": doc_count, "chunks": total_chunks}
 
 
-# ---------------- SEMANTIC SEARCH ----------------
+# ---------------- VECTOR SEARCH HELPER ----------------
 
-def search_knowledge_base(
-    query: str,
-    limit: int = 3
-) -> list[dict]:
-    """Return the most relevant document chunks."""
-
-    if not client.collection_exists(COLLECTION_NAME):
-        print("Collection does not exist. Ingest documents first.")
+def search_knowledge_base(query: str, limit: int = 3) -> List[Dict[str, Any]]:
+    """Returns top semantic matches from Qdrant."""
+    if not client.collection_exists(COLLECTION_NAME) or not query.strip():
         return []
 
-    if not query.strip():
-        return []
-
+    query_vector = embedding_model.encode(query, normalize_embeddings=True).tolist()
     response = client.query_points(
         collection_name=COLLECTION_NAME,
-        query=models.Document(
-            text=query,
-            model=EMBEDDING_MODEL
-        ),
+        query=query_vector,
         limit=limit,
         with_payload=True
     )
 
-    matched = []
-
+    matches = []
     for hit in response.points:
         payload = hit.payload or {}
-
-        matched.append({
+        matches.append({
             "text": payload.get("text", ""),
             "source": payload.get("source", "Unknown"),
-            "category": payload.get("category", "general"),
-            "chunk_id": payload.get("chunk_id"),
+            "category": payload.get("category", "General"),
+            "chunk_id": payload.get("chunk_id", ""),
             "score": round(hit.score, 4)
         })
+    return matches
 
-    return matched
-
-
-# ---------------- TESTING ----------------
 
 if __name__ == "__main__":
-
-    try:
-        ingest_all_documents()
-
-        test_queries = [
-            "What is error PG-ERR-53300 and how to fix it?",
-            "How many weeks of parental leave do I get?",
-            "What is the maximum hotel allowance in London?"
-        ]
-
-        for query in test_queries:
-            print("\n" + "=" * 55)
-            print(f"QUERY: {query}")
-            print("=" * 55)
-
-            hits = search_knowledge_base(query, limit=1)
-
-            if not hits:
-                print("No matching documents found.")
-                continue
-
-            for hit in hits:
-                print(f"Source: {hit['source']}")
-                print(f"Category: {hit['category']}")
-                print(f"Score: {hit['score']}")
-                print(f"Content:\n{hit['text']}")
-
-    finally:
-        client.close()
+    ingest_all_documents(docs_dir="docs", recreate=True)

@@ -15,6 +15,11 @@ fastembed>=0.3.0
 # Environment variables & utilities
 python-dotenv>=1.0.0
 
+# Document parsing, embeddings & hybrid search
+pypdf>=5.0.0
+sentence-transformers>=3.0.0
+rank-bm25>=0.2.2
+
 # Observability & Evals
 langfuse>=2.0.0
 deepeval>=0.21.0
