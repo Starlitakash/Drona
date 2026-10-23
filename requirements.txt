@@ -1,0 +1,20 @@
+# Slack framework
+slack-bolt>=1.18.0
+
+# LLM & Agent orchestration
+langchain>=0.2.0
+langchain-groq>=0.1.0
+langchain-core>=0.2.0
+langgraph>=0.2.0
+langchain-text-splitters>=1.0.0
+
+# Vector database & embeddings
+qdrant-client>=1.9.0
+fastembed>=0.3.0
+
+# Environment variables & utilities
+python-dotenv>=1.0.0
+
+# Observability & Evals
+langfuse>=2.0.0
+deepeval>=0.21.0
