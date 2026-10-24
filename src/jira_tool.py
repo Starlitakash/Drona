@@ -1,15 +1,19 @@
 import os
 import random
 import requests
+from urllib.parse import urlparse
 from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Real Jira credentials from .env (if configured)
-JIRA_SERVER = os.getenv("JIRA_SERVER", "https://nexatech.atlassian.net").rstrip("/")
-JIRA_EMAIL = os.getenv("JIRA_EMAIL", "")
-JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN", "")
+raw_server = os.getenv("JIRA_SERVER", "https://nexatech.atlassian.net").strip()
+p = urlparse(raw_server)
+JIRA_SERVER = f"{p.scheme}://{p.netloc}" if (p.scheme and p.netloc) else raw_server.rstrip("/")
+JIRA_EMAIL = os.getenv("JIRA_EMAIL", "").strip()
+JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN", "").strip()
+JIRA_PROJECT = os.getenv("JIRA_PROJECT", "KAN").strip()
 
 
 def is_jira_configured() -> bool:
@@ -21,14 +25,15 @@ def create_jira_ticket(
     summary: str,
     issue_type: str = "Bug",
     priority: str = "High",
-    project: str = "NEXA",
+    project: str = "KAN",
     description: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Creates a Jira ticket via Jira REST API (v3).
-    Includes robust error handling and falls back to mock mode if credentials are unset.
+    Includes automatic URL sanitization, issue type fallback, and mock fallback.
     """
     desc_text = description or summary
+    target_project = JIRA_PROJECT if project in ["NEXA", ""] else project
 
     if is_jira_configured():
         try:
@@ -38,9 +43,10 @@ def create_jira_ticket(
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             }
+            
             payload = {
                 "fields": {
-                    "project": {"key": project},
+                    "project": {"key": target_project},
                     "summary": summary,
                     "description": {
                         "type": "doc",
@@ -59,9 +65,15 @@ def create_jira_ticket(
 
             response = requests.post(url, json=payload, headers=headers, auth=auth, timeout=10)
 
+            # If project uses Task instead of Bug, retry automatically with Task
+            if response.status_code == 400 and ("issuetype" in response.text.lower() or "valid issue type" in response.text.lower()):
+                payload["fields"]["issuetype"] = {"name": "Task"}
+                issue_type = "Task"
+                response = requests.post(url, json=payload, headers=headers, auth=auth, timeout=10)
+
             if response.status_code == 201:
                 data = response.json()
-                key = data.get("key", f"{project}-000")
+                key = data.get("key", f"{target_project}-000")
                 return {
                     "status": "success",
                     "mode": "real_api",
@@ -70,7 +82,7 @@ def create_jira_ticket(
                     "summary": summary,
                     "issue_type": issue_type,
                     "priority": priority,
-                    "project": project
+                    "project": target_project
                 }
             else:
                 return {
@@ -83,10 +95,9 @@ def create_jira_ticket(
 
         except requests.exceptions.RequestException as e:
             print(f"[Jira API Exception]: {e}")
-            # Fall back gracefully to mock mode if network/DNS fails
-            return _mock_create_ticket(summary, issue_type, priority, project, error=str(e))
+            return _mock_create_ticket(summary, issue_type, priority, target_project, error=str(e))
 
-    return _mock_create_ticket(summary, issue_type, priority, project)
+    return _mock_create_ticket(summary, issue_type, priority, target_project)
 
 
 def get_jira_ticket(ticket_key: str) -> Dict[str, Any]:
@@ -105,17 +116,22 @@ def get_jira_ticket(ticket_key: str) -> Dict[str, Any]:
 
             if response.status_code == 200:
                 data = response.json()
-                fields = data.get("fields", {})
+                fields = data.get("fields") or {}
+                issuetype_obj = fields.get("issuetype") or {}
+                priority_obj = fields.get("priority") or {}
+                status_obj = fields.get("status") or {}
+                assignee_obj = fields.get("assignee") or {}
+
                 return {
                     "status": "success",
                     "mode": "real_api",
                     "key": data.get("key", ticket_key),
                     "url": f"{JIRA_SERVER}/browse/{ticket_key}",
                     "summary": fields.get("summary", "No summary"),
-                    "issue_type": fields.get("issuetype", {}).get("name", "Unknown"),
-                    "priority": fields.get("priority", {}).get("name", "Unknown"),
-                    "status_name": fields.get("status", {}).get("name", "Unknown"),
-                    "assignee": fields.get("assignee", {}).get("displayName", "Unassigned")
+                    "issue_type": issuetype_obj.get("name", "Unknown"),
+                    "priority": priority_obj.get("name", "Unknown"),
+                    "status_name": status_obj.get("name", "Unknown"),
+                    "assignee": assignee_obj.get("displayName", "Unassigned")
                 }
             elif response.status_code == 404:
                 return {
@@ -235,10 +251,17 @@ def _mock_create_ticket(
 
 
 if __name__ == "__main__":
-    print("Testing Jira Tool...")
+    print("Testing Jira Tool against configured Jira server...")
+    print(f"Jira Server: {JIRA_SERVER}")
+    print(f"Jira Project: {JIRA_PROJECT}")
+    print(f"Is Configured: {is_jira_configured()}\n")
+    
     created = create_jira_ticket("Postgres connection pool exhausted on replica 2", issue_type="Bug", priority="High")
     print("Created:", created)
-    fetched = get_jira_ticket("NEXA-101")
+    
+    test_key = created.get("key", "KAN-4")
+    fetched = get_jira_ticket(test_key)
     print("Fetched:", fetched)
-    updated = update_jira_ticket("NEXA-101", "Assigned to SRE on-call engineer.")
+    
+    updated = update_jira_ticket(test_key, "Assigned to SRE on-call engineer.")
     print("Updated:", updated)
