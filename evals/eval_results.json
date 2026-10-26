@@ -1,0 +1,971 @@
+{
+  "timestamp": "2026-10-26 21:20:27",
+  "total_samples": 40,
+  "total_answerable": 36,
+  "overall_hit_rate": 1.0,
+  "overall_mrr": 0.9537,
+  "overall_correctness": 0.925,
+  "category_breakdown": {
+    "hr_benefits": {
+      "total": 8,
+      "hit_rate": 100.0,
+      "mrr": 0.9375,
+      "correctness": 93.75
+    },
+    "travel_and_expense": {
+      "total": 6,
+      "hit_rate": 100.0,
+      "mrr": 1.0,
+      "correctness": 75.0
+    },
+    "engineering_and_devops": {
+      "total": 6,
+      "hit_rate": 100.0,
+      "mrr": 0.9166666666666666,
+      "correctness": 91.67
+    },
+    "it_and_workplace": {
+      "total": 6,
+      "hit_rate": 100.0,
+      "mrr": 1.0,
+      "correctness": 100.0
+    },
+    "compensation_and_payroll": {
+      "total": 5,
+      "hit_rate": 100.0,
+      "mrr": 1.0,
+      "correctness": 100.0
+    },
+    "multi_doc": {
+      "total": 5,
+      "hit_rate": 100.0,
+      "mrr": 0.8666666666666666,
+      "correctness": 90.0
+    },
+    "unanswerable": {
+      "total": 4,
+      "hit_rate": "N/A",
+      "mrr": "N/A",
+      "correctness": 100.0
+    }
+  },
+  "results": [
+    {
+      "id": "eval_01",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "How many days of paid maternity leave are female employees entitled to at NexaTech?",
+      "ground_truth": "Female employees expecting up to two surviving children are entitled to 26 continuous calendar weeks (182 calendar days) of fully paid maternity leave, provided they worked at NexaTech for at least 80 working days in the preceding 12 months.",
+      "retrieved_sources": [
+        "parental_maternity_paternity_leave.md",
+        "employee_handbook.md",
+        "leave_policy_casual_sick.md",
+        "parental_maternity_paternity_leave.md",
+        "csr_volunteering_policy.md"
+      ],
+      "expected_sources": [
+        "parental_maternity_paternity_leave.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "Female employees at NexaTech are entitled to **182 calendar days (26 continuous weeks)** of fully paid maternity leave.\n\n\ud83d\udcda **Sources Cited:**\n- *parental_maternity_paternity_leave.md* (Chunk: parental_maternity_paternity_leave_1)  \n- *employee_handbook.md* (Chunk: employee_handbook_19)",
+      "correctness_score": 0.5,
+      "judge_reason": "Provides correct days/weeks but omits the eligibility conditions (child limit and 80\u2011day work requirement) required by the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_02",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "What is the paternity leave entitlement for new fathers and within what time window must it be availed?",
+      "ground_truth": "Male employees are entitled to 15 working days of fully paid paternity leave upon childbirth or legal adoption of a child under 1 year. It can be availed in up to two tranches within 6 months of childbirth.",
+      "retrieved_sources": [
+        "parental_maternity_paternity_leave.md",
+        "employee_handbook.md",
+        "parental_maternity_paternity_leave.md",
+        "public_holidays_comp_off.md",
+        "bereavement_sabbatical_leave.md"
+      ],
+      "expected_sources": [
+        "parental_maternity_paternity_leave.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Paternity Leave Entitlement**\n\n- **Amount:** 15\u202fworking days of fully\u2011paid leave.  \n- **Usage:** Can be taken in up to **two separate tranches**.  \n- **Time Window:** Must be utilized **within 6\u202fmonths** of the child\u2019s birth or legal adoption (for a child under 1\u202fyear of age).  \n\n\ud83d\udcda **Sources Cited:**  \n- *parental_maternity_paternity_leave.md* (section\u202f3. Paternity Leave)  \n- *employee_handbook.md* (Paternity Leave entry)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing all required details on entitlement, tranches, and time window.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_03",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "How many casual leave days do employees get per year, and what is the maximum consecutive days allowed?",
+      "ground_truth": "Employees receive 12 calendar days of Casual Leave (CL) per year (accrued at 3 days per quarter). It can be taken for a maximum of 3 consecutive business days at a time.",
+      "retrieved_sources": [
+        "employee_handbook.md",
+        "leave_policy_casual_sick.md",
+        "leave_policy_earned_vacation.md",
+        "leave_policy_casual_sick.md",
+        "higher_education_sponsorship.md"
+      ],
+      "expected_sources": [
+        "leave_policy_casual_sick.md"
+      ],
+      "hit": 1,
+      "mrr": 0.5,
+      "candidate_answer": "**Casual Leave (CL) Entitlement**\n\n- **Annual allocation:**\u202f12 calendar days per calendar year (accrued quarterly at 3 days each quarter).  \n- **Maximum consecutive days:**\u202fUp to **3 consecutive business days** per request. Any request for 4\u202f+\u202fconsecutive days must be taken under Earned Leave.\n\n\ud83d\udcda **Sources Cited:**\n- *employee_handbook.md* (Chunk: employee_handbook_19)  \n- *leave_policy_casual_sick.md* (Chunk: leave_policy_casual_sick_1)  \n- *leave_policy_casual_sick.md* (Chunk: leave_policy_casual_sick_2)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the 12 calendar days per year and the 3\u2011day consecutive limit, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_04",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "When is a medical fitness certificate required for taking sick leave?",
+      "ground_truth": "A valid medical fitness certificate and prescription from a registered medical practitioner is required when sick leave exceeds 2 consecutive business days (i.e. 3 or more days). For 1 or 2 days, a self-declaration on NexaPortal is sufficient.",
+      "retrieved_sources": [
+        "leave_policy_casual_sick.md",
+        "employee_handbook.md",
+        "leave_policy_casual_sick.md",
+        "parental_maternity_paternity_leave.md",
+        "leave_policy_casual_sick.md"
+      ],
+      "expected_sources": [
+        "leave_policy_casual_sick.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "A medical fitness certificate is required **when your Sick / Medical Leave (SL) exceeds\u202f2 consecutive business days** (i.e., for 3\u202for more consecutive days of absence). In that case you must upload a valid certificate and prescription from a registered medical practitioner on NexaPortal after you return.\n\n**Key points**\n\n- **1\u20112 days SL:** Self\u2011declaration on NexaPortal is sufficient.  \n- **3\u202f+\u202fdays SL:** Upload a medical fitness certificate\u202f+\u202fprescription from an MBBS\u2011qualified doctor (or equivalent) on NexaPortal upon resumption.  \n\n\ud83d\udcda **Sources Cited:**\n- `leave_policy_casual_sick.md` (Chunk\u202f3) \u2013 details on certificate requirement for >2 consecutive days.  \n- `employee_handbook.md` (Chunk\u202f19) \u2013 confirms certificate mandatory for sick leaves exceeding 2 consecutive days.",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, correctly stating the certificate requirement for >2 days and self\u2011declaration for 1\u20112 days.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_05",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "What is the annual accrual rate and maximum accumulation limit for Earned Leave?",
+      "ground_truth": "Employees earn 18 working days of Earned Leave (EL) per calendar year, accruing at 1.5 days per completed calendar month. Employees can accumulate up to a maximum of 45 working days.",
+      "retrieved_sources": [
+        "leave_policy_earned_vacation.md",
+        "leave_policy_earned_vacation.md",
+        "employee_handbook.md",
+        "full_and_final_settlement_timeline.md",
+        "leave_policy_casual_sick.md"
+      ],
+      "expected_sources": [
+        "leave_policy_earned_vacation.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Earned Leave (EL) \u2013 Accrual & Accumulation**\n\n- **Accrual Rate**\n  - **1.5 working days** for every **completed calendar month** of active service.  \n  - This translates to **18 working days per calendar year** (1.5\u202f\u00d7\u202f12\u202fmonths).  \n\n- **Maximum Accumulation Limit**\n  - An employee may carry forward and retain up to **45 working days** of Earned Leave in their leave balance. Any balance beyond 45 days lapses at year\u2011end.\n\n\ud83d\udcda **Sources Cited:**\n- *leave_policy_earned_vacation.md* \u2013 Chunk 1 (Accrual Rate & Annual Entitlement)  \n- *leave_policy_earned_vacation.md* \u2013 Chunk 3 (Maximum Accumulation Limit)  \n- *employee_handbook.md* \u2013 Chunk 19 (Carry\u2011forward limit)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the accrual rate of 1.5 days per month (18 days per year) and the maximum accumulation limit of 45 days, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_06",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "What is the base sum insured under NexaTech's Group Medical Insurance and who is covered?",
+      "ground_truth": "The base sum insured is \u20b95,00,000 INR per annum on a family floater basis, 100% premium sponsored by NexaTech. It covers Employee + Spouse + up to 2 Dependent Children (Option A) or Employee + 2 Dependent Parents/Parents-in-law (Option B).",
+      "retrieved_sources": [
+        "health_insurance_benefits.md",
+        "health_insurance_benefits.md",
+        "health_insurance_benefits.md",
+        "employee_handbook.md",
+        "health_insurance_benefits.md"
+      ],
+      "expected_sources": [
+        "health_insurance_benefits.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Base Sum Insured**\n\n- **\u20b95,00,000 INR per annum** on a family\u2011floater basis (100\u202f% premium paid by NexaTech).\n\n**Who Is Covered**\n\n- **Option\u202fA:** Employee\u202f+\u202fSpouse\u202f+\u202fup to\u202f2 dependent children (children up to age\u202f25).  \n- **Option\u202fB:** Employee\u202f+\u202fup to\u202f2 dependent parents or parents\u2011in\u2011law (subject to payroll co\u2011pay or premium differential).\n\n*Both options are automatically applied to all regular full\u2011time employees from their official date of joining.*\n\n\ud83d\udcda **Sources Cited:**\n- `health_insurance_benefits.md` (Chunk: health_insurance_benefits_3)  \n- `employee_handbook.md` (Chunk: employee_handbook_16)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the \u20b95,00,000 family\u2011floater sum insured and both coverage options matching the ground truth, with only harmless additional details.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_07",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "What are the health insurance coverage sub-limits for normal and caesarean deliveries?",
+      "ground_truth": "Under NexaTech's medical policy, the normal delivery maternity limit is up to \u20b975,000 INR, and the caesarean (C-section) limit is up to \u20b91,00,000 INR. The standard 9-month waiting period is waived from Day 1.",
+      "retrieved_sources": [
+        "health_insurance_benefits.md",
+        "health_insurance_benefits.md",
+        "health_insurance_benefits.md",
+        "health_insurance_benefits.md",
+        "employee_handbook.md"
+      ],
+      "expected_sources": [
+        "health_insurance_benefits.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Health\u2011Insurance Maternity Sub\u2011Limits**\n\n- **Normal (vaginal) delivery:** up to **\u20b975,000 INR**  \n- **Caesarean (C\u2011Section) delivery:** up to **\u20b91,00,000 INR**\n\n\ud83d\udcda **Sources Cited:**  \n- *health_insurance_benefits.md* \u2013 Chunk **health_insurance_benefits_7**.",
+      "correctness_score": 1.0,
+      "judge_reason": "Provides the exact sub\u2011limit figures for both normal and caesarean deliveries matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_08",
+      "category": "hr_benefits",
+      "question_type": "single_doc",
+      "question": "What is the annual Outpatient Department (OPD) and dental/vision allowance per employee?",
+      "ground_truth": "NexaTech provides an annual OPD, dental, and vision reimbursement allowance of \u20b910,000 INR per financial year per employee, claimable via the MediBuddy app.",
+      "retrieved_sources": [
+        "health_insurance_benefits.md",
+        "learning_development_certifications.md",
+        "travel_expense_reimbursement.md",
+        "hardware_asset_management.md",
+        "remote_work_ergonomics_stipend.md"
+      ],
+      "expected_sources": [
+        "health_insurance_benefits.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "- **Annual OPD & Dental/Vision allowance:** **\u20b910,000\u202fINR** per employee for each financial year.\n\n\ud83d\udcda **Sources Cited:**  \n- *health_insurance_benefits.md* (Chunk: health_insurance_benefits_8)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the annual OPD and dental/vision allowance as \u20b910,000 INR per employee per financial year, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_09",
+      "category": "travel_and_expense",
+      "question_type": "single_doc",
+      "question": "Who must approve a Travel Authorization Request (TAR) if the estimated cost exceeds \u20b92,00,000 INR or involves international travel?",
+      "ground_truth": "TARs with estimated cost exceeding \u20b92,00,000 INR or involving international travel require approval from the Reporting Manager, the Practice/Business Unit Head, and the Chief Financial Officer (CFO).",
+      "retrieved_sources": [
+        "travel_expense_reimbursement.md",
+        "corporate_credit_card_policy.md",
+        "travel_expense_reimbursement.md",
+        "client_gift_and_hospitality.md",
+        "travel_expense_reimbursement.md"
+      ],
+      "expected_sources": [
+        "travel_expense_reimbursement.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Approval required for a Travel Authorization Request (TAR) when the estimated cost exceeds\u202f\u20b92,00,000\u202for the travel is international:**\n\n- **Reporting Manager**  \n- **Business Unit (BU) Head**  \n- **Chief Financial Officer (CFO)**  \n\nThese three approvers must sign off before any booking can be made.\n\n\ud83d\udcda **Sources Cited:**  \n- *travel_expense_reimbursement.md* \u2013\u202fChunk **travel_expense_reimbursement_3**.",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly lists all required approvers (Reporting Manager, Business Unit Head, CFO) matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_10",
+      "category": "travel_and_expense",
+      "question_type": "single_doc",
+      "question": "What is the nightly hotel room rate reimbursement cap for Band 1 to Band 3 engineers in Tier 1 metro cities?",
+      "ground_truth": "For Band 1 - Band 3 employees (Engineers, Analysts, Senior SDEs), the hotel room rate cap in Tier 1 Metros is up to \u20b94,500 INR per night (exclusive of GST/taxes).",
+      "retrieved_sources": [
+        "travel_expense_reimbursement.md",
+        "travel_expense_reimbursement.md",
+        "relocation_assistance_policy.md",
+        "travel_expense_reimbursement.md",
+        "client_entertainment_expense_policy.md"
+      ],
+      "expected_sources": [
+        "travel_expense_reimbursement.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Nightly hotel room rate reimbursement cap for Band\u202f1\u2011Band\u202f3 engineers (Tier\u202f1 metros):**  \n- **\u20b94,500 per night** (exclusive of GST/taxes).\n\n\ud83d\udcda **Sources Cited:**  \n- *travel_expense_reimbursement.md* \u2013 Chunk **travel_expense_reimbursement_8**.",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing the correct \u20b94,500 per night cap and noting it is exclusive of GST/taxes.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_11",
+      "category": "travel_and_expense",
+      "question_type": "single_doc",
+      "question": "What is the maximum hotel allowance and daily meal per diem for official business travel to Greater London?",
+      "ground_truth": "For business travel to Greater London, the maximum hotel cap is up to \u00a3180 GBP per night, and the daily food and incidental per diem is \u00a365 GBP per day.",
+      "retrieved_sources": [
+        "travel_expense_reimbursement.md",
+        "travel_expense_reimbursement.md",
+        "travel_expense_reimbursement.md",
+        "client_entertainment_expense_policy.md",
+        "travel_expense_reimbursement.md"
+      ],
+      "expected_sources": [
+        "travel_expense_reimbursement.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Greater London (United Kingdom) \u2013 Official Business Travel**\n\n| Item | Maximum Allowance |\n|------|-------------------|\n| **Hotel (per night)** | **\u00a3180\u202fGBP** |\n| **Daily Food & Incidental Per Diem** | **\u00a365\u202fGBP** |\n\n*These amounts are the caps for international travel and are provided via the corporate multi\u2011currency Forex card before departure.*\n\n\ud83d\udcda **Sources Cited:**  \n- *travel_expense_reimbursement.md* \u2013 Chunk **travel_expense_reimbursement_13**.",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth figures for hotel (\u00a3180/night) and per diem (\u00a365/day) with no inaccuracies.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_12",
+      "category": "travel_and_expense",
+      "question_type": "single_doc",
+      "question": "What is the daily meal allowance in Tier 1 cities for receipt-based reimbursement versus flat per diem?",
+      "ground_truth": "In Tier 1 cities, receipt-based meal reimbursement is capped at up to \u20b91,200 per day, while the flat per diem (no receipts required, credited via payroll) is \u20b9750 per day.",
+      "retrieved_sources": [
+        "travel_expense_reimbursement.md",
+        "travel_expense_reimbursement.md",
+        "travel_expense_reimbursement.md",
+        "travel_expense_reimbursement.md",
+        "client_entertainment_expense_policy.md"
+      ],
+      "expected_sources": [
+        "travel_expense_reimbursement.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Daily Meal Allowance \u2013 Tier\u202f1 Cities (Metros)**  \n\n| Reimbursement Type | Amount (per day) |\n|--------------------|------------------|\n| Receipt\u2011based actuals | **\u20b91,200** |\n| Flat per\u2011diem (no receipts) | **\u20b9750** |\n\n*Meals provided free of charge by hotels or clients are excluded from these claims.*\n\n\ud83d\udcda **Sources Cited:**  \n- *travel_expense_reimbursement.md* \u2013 Chunk **travel_expense_reimbursement_10**.",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth figures and conditions for Tier 1 city meal allowances.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_13",
+      "category": "travel_and_expense",
+      "question_type": "single_doc",
+      "question": "Within how many calendar days must travel expense reimbursement claims be filed?",
+      "ground_truth": "Travel expense reimbursement claims must be filed via NexaPortal within 15 calendar days of completing travel. Claims submitted after 30 days are automatically forfeited and rejected.",
+      "retrieved_sources": [
+        "travel_expense_reimbursement.md",
+        "remote_work_ergonomics_stipend.md",
+        "client_entertainment_expense_policy.md",
+        "public_holidays_comp_off.md",
+        "health_insurance_benefits.md"
+      ],
+      "expected_sources": [
+        "travel_expense_reimbursement.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "Travel expense reimbursement claims must be filed **within\u202f15\u202fcalendar days** of completing the travel.\n\n\ud83d\udcda **Sources Cited:**\n- *travel_expense_reimbursement.md* (section\u202f7.1\u202fSubmission Timeline and Documentation)",
+      "correctness_score": 0.5,
+      "judge_reason": "Correctly states the 15\u2011day filing window but omits the ground\u2011truth condition that claims after 30 days are forfeited",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_14",
+      "category": "travel_and_expense",
+      "question_type": "single_doc",
+      "question": "What is the per-person spending ceiling for client entertainment business meals hosted in India?",
+      "ground_truth": "Client entertainment business meals hosted by senior team members (Band 4+) in India have a spending ceiling of maximum \u20b93,000 INR per person, subject to prior written approval from the BU Head.",
+      "retrieved_sources": [
+        "travel_expense_reimbursement.md",
+        "client_entertainment_expense_policy.md",
+        "code_of_conduct_ethics.md",
+        "code_of_conduct_ethics.md",
+        "client_entertainment_expense_policy.md"
+      ],
+      "expected_sources": [
+        "travel_expense_reimbursement.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Per\u2011person spending ceiling for client\u2011entertainment business meals in India**\n\n| Geography (India) | Maximum Meal Ceiling (per person) | Who may host |\n|-------------------|-----------------------------------|--------------|\n| Tier\u202f1 metros (e.g., Delhi, Mumbai, Bengaluru, Chennai) | **\u20b93,000 INR** | Senior team members (Band\u202f4\u202fand above) |\n| Tier\u202f2 / Tier\u202f3 cities | **\u20b92,000 INR** | Senior team members (Band\u202f4\u202fand above) |\n\n*The ceiling includes food, moderate alcoholic beverages, taxes, and gratuities. Prior written approval from the Practice/BU Head (or BU Head) is required.*\n\n\ud83d\udcda **Sources Cited:**\n- `client_entertainment_expense_policy.md` \u2013 Chunk **client_entertainment_expense_policy_1**\n- `travel_expense_reimbursement.md` \u2013 Chunk **travel_expense_reimbursement_16**",
+      "correctness_score": 0.0,
+      "judge_reason": "The answer adds incorrect tier\u2011based ceilings (\u20b92,000 for Tier\u202f2/3) that contradict the ground truth, which states a uniform \u20b93,000 per\u2011person limit.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_15",
+      "category": "engineering_and_devops",
+      "question_type": "single_doc",
+      "question": "What is the initial response SLA and war room mandate for a SEV-1 critical incident?",
+      "ground_truth": "For a SEV-1 critical outage, the initial response SLA is 10 minutes. It mandates an immediate 24/7 video bridge and dedicated Slack channel #incident-sev1 with notification to Executive Leadership, BU Head, CISO, and Lead SRE.",
+      "retrieved_sources": [
+        "incident_response_sre_runbook.md",
+        "security_incident_classification.md",
+        "incident_response_sre_runbook.md",
+        "it_security_acceptable_use.md",
+        "service_level_agreements_sla.md"
+      ],
+      "expected_sources": [
+        "incident_response_sre_runbook.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Initial Response SLA (SEV\u20111 Critical Incident)**  \n- **10\u202fMinutes** \u2013 time to acknowledge the page and begin response.\n\n**War Room Mandate (SEV\u20111 Critical Incident)**  \n- Mandatory 24/7 video bridge.  \n- Dedicated Slack channel **#incident\u2011sev1** for coordination.\n\n\ud83d\udcda **Sources Cited:**  \n- *incident_response_sre_runbook.md* (Severity table \u2013 SEV\u20111 row)",
+      "correctness_score": 0.5,
+      "judge_reason": "Provides correct SLA and video bridge/Slack channel but omits the required notifications to Executive Leadership, BU Head, CISO, and Lead SRE.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_16",
+      "category": "engineering_and_devops",
+      "question_type": "single_doc",
+      "question": "What are the core responsibilities of an Incident Commander during a major outage?",
+      "ground_truth": "The Incident Commander holds single-point operational authority over the incident, directs troubleshooting paths, enforces timeboxes, and authorizes failovers. The IC does NOT write code or execute terminal commands directly.",
+      "retrieved_sources": [
+        "incident_response_sre_runbook.md",
+        "third_party_vendor_security.md",
+        "incident_response_sre_runbook.md",
+        "incident_response_sre_runbook.md",
+        "incident_response_sre_runbook.md"
+      ],
+      "expected_sources": [
+        "incident_response_sre_runbook.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Core responsibilities of the Incident Commander (IC) during a major outage (SEV\u20111 / SEV\u20112):**\n\n- **Single\u2011point operational authority** \u2013 the IC is the ultimate decision\u2011maker for all incident actions.  \n- **Direct troubleshooting efforts** \u2013 assigns investigation paths to the Operations Lead (SRE/SME) and other responders.  \n- **Enforce timeboxes** \u2013 sets and monitors time limits for each diagnostic or remediation step to keep the response focused.  \n- **Authorize critical actions** \u2013 approves failover, traffic diversion, deployment rollbacks, or any other high\u2011impact operational changes.  \n- **Maintain role separation** \u2013 does **not** write code or execute terminal commands directly; those tasks remain with the Operations Lead.  \n\n\ud83d\udcda **Sources Cited:**  \n- *incident_response_sre_runbook.md* \u2013 Chunk **incident_response_sre_runbook_7**.",
+      "correctness_score": 1.0,
+      "judge_reason": "Candidate answer fully matches the ground truth, covering all core responsibilities and correctly noting the IC does not write code or run commands.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_17",
+      "category": "engineering_and_devops",
+      "question_type": "single_doc",
+      "question": "What is the weekly on-call readiness allowance for primary and secondary SRE engineers?",
+      "ground_truth": "Engineers rostered as primary on-call receive an on-call readiness allowance of \u20b912,000 INR per week, while secondary on-call engineers receive \u20b96,000 INR per week.",
+      "retrieved_sources": [
+        "incident_response_sre_runbook.md",
+        "oncall_engineer_handbook.md",
+        "overtime_and_weekend_work_payout.md",
+        "onboarding_sde.md",
+        "oncall_engineer_handbook.md"
+      ],
+      "expected_sources": [
+        "incident_response_sre_runbook.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Weekly On\u2011Call Readiness Allowance**\n\n| Role | Weekly Allowance |\n|------|------------------|\n| Primary On\u2011Call Engineer (SRE / Platform) | **\u20b912,000\u202fINR** per week |\n| Secondary On\u2011Call Engineer (SRE / Platform) | **\u20b96,000\u202fINR** per week |\n\n\ud83d\udcda **Sources Cited:**\n- *incident_response_sre_runbook.md* (section \u201c5. On\u2011Call Rotations and Compensation\u201d)\n- *oncall_engineer_handbook.md* (table under \u201c3. On\u2011Call Compensation & Fatigue Management\u201d)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth figures for primary (\u20b912,000) and secondary (\u20b96,000) weekly allowances.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_18",
+      "category": "engineering_and_devops",
+      "question_type": "single_doc",
+      "question": "Within what timeframe must draft Root Cause Analysis (RCA) documents be published for SEV-1 and SEV-2 incidents?",
+      "ground_truth": "A draft RCA must be published within 48 hours of incident resolution for SEV-1 incidents, and within 72 hours for SEV-2 incidents.",
+      "retrieved_sources": [
+        "incident_response_sre_runbook.md",
+        "service_level_agreements_sla.md",
+        "incident_response_sre_runbook.md",
+        "incident_response_sre_runbook.md",
+        "incident_response_sre_runbook.md"
+      ],
+      "expected_sources": [
+        "incident_response_sre_runbook.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Draft RCA Publication Timeframes**\n\n| Incident Severity | Draft RCA must be published within |\n|-------------------|-------------------------------------|\n| **SEV\u20111**         | **48\u202fhours** after incident resolution |\n| **SEV\u20112**         | **72\u202fhours** after incident resolution |\n\n\ud83d\udcda **Sources Cited:**\n- *incident_response_sre_runbook.md* (Chunk: incident_response_sre_runbook_14)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing the correct timeframes for both SEV-1 and SEV-2 draft RCA publications.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_19",
+      "category": "engineering_and_devops",
+      "question_type": "single_doc",
+      "question": "What compensation is provided to engineers engaged in after-hours incident response between 10:00 PM and 6:00 AM IST?",
+      "ground_truth": "If engaged after-hours between 10:00 PM and 6:00 AM IST, engineers receive 1 day of compensatory off (Comp-Off) plus an incident allowance of \u20b92,500 INR per night engaged.",
+      "retrieved_sources": [
+        "incident_response_sre_runbook.md",
+        "oncall_engineer_handbook.md",
+        "oncall_engineer_handbook.md",
+        "shift_timing_and_night_allowance.md",
+        "lost_and_found_policy.md"
+      ],
+      "expected_sources": [
+        "incident_response_sre_runbook.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Compensation for after\u2011hours incident response (10\u202fPM\u202f\u2013\u202f6\u202fAM IST)**  \n\n| Engineer Role | Weekly Readiness Allowance | Night\u2011time Incident Stipend | Additional Benefit |\n|---|---|---|---|\n| **Primary On\u2011Call Engineer** | \u20b912,000\u202fINR per week | \u20b92,500\u202fINR for each night they are engaged | 1\u202fComp\u2011Off day (full day off) for the night worked |\n| **Secondary On\u2011Call Engineer** | \u20b96,000\u202fINR per week | \u20b92,500\u202fINR for each night they are escalated and engaged | 1\u202fComp\u2011Off day (full day off) for the night worked |\n\n**Key points**\n\n- The night\u2011time stipend applies only when the engineer is called after\u2011hours (10\u202fPM\u202f\u2013\u202f6\u202fAM IST).  \n- In addition to the monetary payout, the engineer receives a compensatory off (Comp\u2011Off) day for each night they respond.  \n- The weekly readiness allowance is paid regardless of whether a night incident occurs; the \u20b92,500 night payout is added on top of that for each engaged night.  \n\n\ud83d\udcda **Sources Cited:**  \n- `incident_response_sre_runbook.md` (section \u201cOn\u2011Call Pager Allowance\u201d & \u201cIncident Engagement Stipend\u201d)  \n- `oncall_engineer_handbook.md` (chunks \u201c3. On\u2011Call Compensation & Fatigue Management\u201d and \u201c3.1 Sleep Deprivation & Fatigue Recovery\u201d)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the \u20b92,500 night allowance and 1 Comp-Off day per engaged night, matching the ground truth while adding only non\u2011contradictory extra details.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_20",
+      "category": "engineering_and_devops",
+      "question_type": "single_doc",
+      "question": "What are the minimum password length and rotation frequency requirements under NexaTech security standards?",
+      "ground_truth": "NexaTech requires a minimum password length of 14 alphanumeric characters (with uppercase, lowercase, number, and special symbol). Mandatory password expiration and change is enforced every 90 calendar days.",
+      "retrieved_sources": [
+        "it_security_acceptable_use.md",
+        "password_authentication_standards.md",
+        "employee_handbook.md",
+        "password_authentication_standards.md",
+        "shift_timing_and_night_allowance.md"
+      ],
+      "expected_sources": [
+        "password_authentication_standards.md"
+      ],
+      "hit": 1,
+      "mrr": 0.5,
+      "candidate_answer": "**Minimum Password Length**\n- **14 characters** (must include uppercase, lowercase, a digit, and a special symbol).\n\n**Rotation Frequency**\n- Passwords must be changed **every 90 days** (calendar days).\n\n**Sources Cited**\n- *it_security_acceptable_use.md* (Chunk\u202f3)  \n- *password_authentication_standards.md* (Chunk\u202f1)  \n- *employee_handbook.md* (Chunk\u202f23)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly provides the exact minimum length (14 characters with required character types) and rotation frequency (every 90 calendar days) matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_21",
+      "category": "it_and_workplace",
+      "question_type": "single_doc",
+      "question": "What is the standard hardware budget and device models for Software Engineers and DevOps in Band 1 to Band 3?",
+      "ground_truth": "Software Engineers and DevOps (Band 1 - Band 3) receive a High-Performance Engineering Workstation with a budget ceiling up to \u20b92,20,000 INR. Standard models are Apple MacBook Pro 16\" (M3 Pro, 36GB RAM, 1TB SSD) or Dell XPS 15 (i7, 32GB RAM, 1TB SSD).",
+      "retrieved_sources": [
+        "hardware_asset_management.md",
+        "onboarding_sde.md",
+        "performance_review_promotion.md",
+        "resignation_and_notice_period.md",
+        "internship_program_guidelines.md"
+      ],
+      "expected_sources": [
+        "hardware_asset_management.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Standard Hardware Budget & Device Models for Software Engineers, Data Engineers, DevOps & CloudOps (Band\u202f1\u202f\u2013\u202fBand\u202f3)**  \n\n| Category | Hardware Specification Tier | Approved Device Models | Budget Ceiling (INR) |\n|----------|-----------------------------|------------------------|----------------------|\n| Software Engineers, Data Engineers, DevOps, CloudOps (Band\u202f1\u2011Band\u202f3) | High\u2011Performance Engineering Workstation | \u2022 **Apple MacBook Pro\u202f16\u2011inch** (M3\u202fPro, 36\u202fGB RAM, 1\u202fTB SSD)  <br>\u2022 **Dell XPS\u202f15** (Intel\u202fi7\u202f14th\u202fGen, 32\u202fGB RAM, 1\u202fTB SSD, Ubuntu\u202fLTS\u202f24.04 or Windows\u202f11\u202fEnterprise) | Up to **\u20b92,20,000** |\n\n*These devices are the standard issue for the listed roles on Day\u202f1, as defined in the hardware asset policy.*\n\n\ud83d\udcda **Sources Cited:**  \n- `hardware_asset_management.md` (hardware_asset_management_2)  \n- `onboarding_sde.md` (onboarding_sde_2)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the \u20b92,20,000 budget ceiling and the exact Apple MacBook Pro 16\" and Dell XPS 15 models for Software Engineers and DevOps in Bands 1\u20113, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_22",
+      "category": "it_and_workplace",
+      "question_type": "single_doc",
+      "question": "What is the hardware budget ceiling for Principal Architects and Technical Directors (Band 4+)?",
+      "ground_truth": "Principal Architects, Technical Directors, and AI/ML Specialists (Band 4+) are allocated Advanced Compute/AI Workstations with a budget ceiling of up to \u20b93,20,000 INR (e.g. MacBook Pro 16\" M3 Max 64GB or ThinkPad P1 Gen 7 RTX 4070).",
+      "retrieved_sources": [
+        "hardware_asset_management.md",
+        "car_lease_policy.md",
+        "performance_review_promotion.md",
+        "client_entertainment_expense_policy.md",
+        "overtime_and_weekend_work_payout.md"
+      ],
+      "expected_sources": [
+        "hardware_asset_management.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Hardware budget ceiling for Principal Architects and Technical Directors (Band\u202f4+):**  \n- Up to **\u20b93,20,000 INR** per workstation.\n\n\ud83d\udcda **Sources Cited:**  \n- *hardware_asset_management.md* (hardware_asset_management_2)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing the correct \u20b93,20,000 INR budget ceiling for Band\u202f4+ roles.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_23",
+      "category": "it_and_workplace",
+      "question_type": "single_doc",
+      "question": "What is the laptop hardware refresh cycle and what buy-back option is available to employees?",
+      "ground_truth": "Laptops have a standard refresh cycle of 36 months (3 years). Upon completion of 36 months, employees may purchase their decommissioned laptop at depreciated salvage value (typically 10% to 15% of invoice value) following data sanitization.",
+      "retrieved_sources": [
+        "hardware_asset_management.md",
+        "hardware_asset_management.md",
+        "hardware_asset_management.md",
+        "hardware_asset_management.md",
+        "bereavement_sabbatical_leave.md"
+      ],
+      "expected_sources": [
+        "hardware_asset_management.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Laptop Refresh Cycle & Buy\u2011Back Option**\n\n- **Refresh Cycle:**  \n  - Laptops are refreshed **every 36\u202fmonths (3\u202fyears)** from the original deployment date.\n\n- **Buy\u2011Back Option:**  \n  - After the 36\u2011month period, employees may purchase their decommissioned laptop.  \n  - The price is based on the **fair depreciated market salvage value**, typically **10\u202f%\u201315\u202f% of the original invoice value**.  \n  - Before transfer, the laptop is fully sanitized (removal of corporate data, BitLocker/FileVault keys, and MDM profiles).\n\n\ud83d\udcda **Sources Cited:**  \n- `hardware_asset_management.md` \u2013 Chunk **hardware_asset_management_7**.",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer accurately states the 36\u2011month refresh cycle and the 10\u201115% salvage\u2011value buy\u2011back option with data sanitization, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_24",
+      "category": "it_and_workplace",
+      "question_type": "single_doc",
+      "question": "What is the monthly broadband reimbursement limit and what is the submission deadline?",
+      "ground_truth": "NexaTech reimburses up to \u20b91,500 INR per month (inclusive of GST) toward home broadband internet bills. Claims must be submitted via NexaPortal within 30 calendar days of invoice generation.",
+      "retrieved_sources": [
+        "remote_work_ergonomics_stipend.md",
+        "remote_work_ergonomics_stipend.md",
+        "telecom_mobile_handset_reimbursement.md",
+        "wfh_quick_reference.md",
+        "health_insurance_benefits.md"
+      ],
+      "expected_sources": [
+        "remote_work_ergonomics_stipend.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Monthly Broadband Reimbursement**\n\n- **Limit:** Up to **\u20b91,500\u202fINR per month** (inclusive of GST). If the actual bill is lower, you are reimbursed for the actual amount; any amount above \u20b91,500 is borne by the employee.  \n- **Submission Deadline:** Claims must be filed **within\u202f30\u202fcalendar days** of the invoice generation date.  \n\n\ud83d\udcda **Sources Cited:**\n- *remote_work_ergonomics_stipend.md* (Chunk\u202f4 & Chunk\u202f5)  \n- *wfh_quick_reference.md* (Chunk\u202f1)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the \u20b91,500 INR monthly limit and the 30\u2011day submission deadline, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_25",
+      "category": "it_and_workplace",
+      "question_type": "single_doc",
+      "question": "What is the one-time home ergonomic setup allowance limit and claim window?",
+      "ground_truth": "Confirmed full-time employees are entitled to a one-time reimbursement of up to \u20b915,000 INR for ergonomic office equipment (task chair, sit-stand desk, monitor arms, router UPS), claimable within 90 calendar days of confirmation.",
+      "retrieved_sources": [
+        "remote_work_ergonomics_stipend.md",
+        "hardware_asset_management.md",
+        "wfh_quick_reference.md",
+        "hardware_asset_management.md",
+        "onboarding_operations_support.md"
+      ],
+      "expected_sources": [
+        "remote_work_ergonomics_stipend.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**One\u2011Time Home Ergonomic Setup Allowance**\n\n- **Maximum amount:**\u202f\u20b915,000\u202fINR (inclusive of applicable GST)  \n- **Claim window:**\u202fMust be claimed within **90\u202fcalendar days** of the employee\u2019s formal employment confirmation (i.e., after completing the 90\u2011day probationary period).\n\n\ud83d\udcda **Sources Cited:**  \n- `remote_work_ergonomics_stipend.md` (Chunk: remote_work_ergonomics_stipend_1)  \n- `hardware_asset_management.md` (Chunk: hardware_asset_management_6)",
+      "correctness_score": 1.0,
+      "judge_reason": "Provides the exact \u20b915,000 limit and 90\u2011day claim window matching the ground truth, with no contradictory information",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_26",
+      "category": "it_and_workplace",
+      "question_type": "single_doc",
+      "question": "What are the core business hours and mandatory in-office anchor days under the hybrid policy?",
+      "ground_truth": "Under the 3+2 hybrid model, employees work 3 days in-office and 2 days remote. Mandatory in-office anchor days are Tuesdays and Thursdays, and core business hours are 10:00 AM to 4:00 PM IST.",
+      "retrieved_sources": [
+        "work_from_home_hybrid_policy.md",
+        "wfh_quick_reference.md",
+        "work_from_home_hybrid_policy.md",
+        "work_from_home_hybrid_policy.md",
+        "project_allocation_bench_policy.md"
+      ],
+      "expected_sources": [
+        "work_from_home_hybrid_policy.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Core Business Hours**\n\n- **10:00\u202fAM\u202f\u2013\u202f4:00\u202fPM IST** \u2013 All team members must be actively available (Slack, video/audio for meetings) during this window, regardless of whether they are working on\u2011site or remotely.\u3010work_from_home_hybrid_policy_3\u3011\n\n**Mandatory In\u2011Office Anchor Days**\n\n- **Tuesday** \u2013 Organization/BU anchor day (mandatory for all delivery\u2011center staff.  \n- **Thursday** \u2013 Organization/BU anchor day (mandatory for all delivery\u2011center staff.  \n- **One additional floating day** \u2013 Chosen by your Delivery Lead or Project Manager as the team\u2019s third in\u2011office day.  \n\nThese three days constitute the required **3\u2011day in\u2011office** portion of the 3+2 hybrid model.\u3010work_from_home_hybrid_policy_2\u3011\n\n---\n\n\ud83d\udcda **Sources Cited:**\n- `work_from_home_hybrid_policy.md` (Chunk\u202f2 \u2013 anchor days)\n- `work_from_home_hybrid_policy.md` (Chunk\u202f3 \u2013 core business hours)",
+      "correctness_score": 1.0,
+      "judge_reason": "Provides the exact core business hours (10:00\u202fAM\u20134:00\u202fPM IST) and correctly lists the mandatory anchor days (Tuesday and Thursday), matching the ground truth",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_27",
+      "category": "compensation_and_payroll",
+      "question_type": "single_doc",
+      "question": "What is the referral bounty for hiring a Band 3 Senior SDE, and how much is it for a diversity candidate?",
+      "ground_truth": "For Band 3 (Senior SDE / Technical Lead), the standard referral bounty is \u20b950,000 INR, while the bounty for a niche skill or diversity candidate is \u20b975,000 INR.",
+      "retrieved_sources": [
+        "referral_bonus_policy.md",
+        "internship_program_guidelines.md",
+        "referral_bonus_policy.md",
+        "performance_review_promotion.md",
+        "referral_bonus_policy.md"
+      ],
+      "expected_sources": [
+        "referral_bonus_policy.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Referral bounty for a Band\u202f3 Senior SDE**\n\n| Candidate Type | Referral Bounty |\n|----------------|-----------------|\n| Standard hire | **\u20b950,000** |\n| Diversity or niche\u2011skill hire* | **\u20b975,000** |\n\n\\* Diversity candidates (female, non\u2011binary, or differently\u2011abled) and niche\u2011skill roles qualify for the higher bounty tier\u3010referral_bonus_policy_1\u3011.\n\n\ud83d\udcda **Sources Cited:**\n- `referral_bonus_policy.md` (Chunk: referral_bonus_policy_1)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the \u20b950,000 standard bounty and the \u20b975,000 bounty for diversity or niche\u2011skill candidates, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_28",
+      "category": "compensation_and_payroll",
+      "question_type": "single_doc",
+      "question": "How are employee referral bonuses disbursed across tranches?",
+      "ground_truth": "Referral bounties are disbursed in two equal 50% tranches: Tranche 1 (50%) is paid in the payroll cycle immediately following the candidate's joining date, and Tranche 2 (50%) is paid following successful 90-day probationary confirmation.",
+      "retrieved_sources": [
+        "referral_bonus_policy.md",
+        "annual_bonus_incentive_plan.md",
+        "full_and_final_settlement_timeline.md",
+        "referral_bonus_policy.md",
+        "confidentiality_nda_guidelines.md"
+      ],
+      "expected_sources": [
+        "referral_bonus_policy.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Employee Referral Bonus Disbursement**\n\n- **Two equal installments (tranches)**\n  - **Tranche\u202f1 \u2013 50\u202f% of the bounty**  \n    - Paid in the payroll cycle **immediately after the candidate\u2019s formal joining date**.  \n  - **Tranche\u202f2 \u2013 Remaining 50\u202f%**  \n    - Paid in the payroll cycle **after the candidate successfully completes the 90\u2011day probationary period**.  \n\n- **Eligibility for each payout**  \n  - The referring employee must be **on active payroll** on the date each tranche is paid.\n\n\ud83d\udcda **Sources Cited:**  \n- `referral_bonus_policy.md` (Chunk: referral_bonus_policy_3)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the two equal 50% tranches and the timing of each payout, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_29",
+      "category": "compensation_and_payroll",
+      "question_type": "single_doc",
+      "question": "What are the hours and per-shift allowance for the night shift (US hours)?",
+      "ground_truth": "The Night Shift operates from 10:00 PM to 06:30 AM IST and provides an allowance of \u20b9800 INR per active shift worked, along with dedicated door-to-door transport with security escort.",
+      "retrieved_sources": [
+        "shift_timing_and_night_allowance.md",
+        "shift_timing_and_night_allowance.md",
+        "employee_handbook.md",
+        "shift_timing_and_night_allowance.md",
+        "shift_timing_and_night_allowance.md"
+      ],
+      "expected_sources": [
+        "shift_timing_and_night_allowance.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Night Shift (US Hours)**  \n- **Operational Hours (IST):**\u202f10:00\u202fPM\u202f\u2013\u202f06:30\u202fAM  \n- **Per\u2011Shift Allowance:**\u202f\u20b9800\u202fINR (credited with monthly payroll)\n\n\ud83d\udcda **Sources Cited:**  \n- `shift_timing_and_night_allowance.md` (Chunk: shift_timing_and_night_allowance_2)",
+      "correctness_score": 1.0,
+      "judge_reason": "Provides the exact night shift hours and \u20b9800 INR per\u2011shift allowance matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_30",
+      "category": "compensation_and_payroll",
+      "question_type": "single_doc",
+      "question": "What is the maximum limit on consecutive night shifts an employee can be scheduled to work?",
+      "ground_truth": "No employee may be scheduled for more than 5 consecutive night shifts. After 5 consecutive night shifts, a mandatory rest window of at least 48 continuous hours is enforced.",
+      "retrieved_sources": [
+        "shift_timing_and_night_allowance.md",
+        "leave_policy_casual_sick.md",
+        "shift_timing_and_night_allowance.md",
+        "employee_handbook.md",
+        "leave_policy_earned_vacation.md"
+      ],
+      "expected_sources": [
+        "shift_timing_and_night_allowance.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "The policy states that an employee may work **no more than\u202f5 consecutive night shifts**. After reaching this limit, a mandatory rest period of at least 48 continuous hours is required before any further shift assignment.\n\n\ud83d\udcda **Sources Cited:**\n- `shift_timing_and_night_allowance.md` (Chunk: shift_timing_and_night_allowance_7)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing the correct limit of 5 consecutive night shifts and the required 48\u2011hour rest period.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_31",
+      "category": "compensation_and_payroll",
+      "question_type": "single_doc",
+      "question": "What is the vesting schedule and cliff period for NexaTech's Employee Stock Option Plan (ESOP)?",
+      "ground_truth": "The ESOP scheme follows a 4-year graded vesting schedule with a 1-year cliff: 25% of granted options vest at Month 12 (1st anniversary), and the remaining 75% vests in equal monthly increments of 2.083% across Months 13 to 48.",
+      "retrieved_sources": [
+        "esop_equity_incentive_plan.md",
+        "annual_bonus_incentive_plan.md",
+        "esop_equity_incentive_plan.md",
+        "esop_equity_incentive_plan.md",
+        "vendor_invoice_payment_terms.md"
+      ],
+      "expected_sources": [
+        "esop_equity_incentive_plan.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Vesting Schedule & Cliff Period for NexaTech\u2019s ESOP**\n\n- **Cliff:** 1\u2011year cliff (no options vest until the first anniversary of the Grant Date).  \n- **Vesting Pattern:** 4\u2011year graded vesting  \n  - **Month\u202f12 (1\u2011Year Cliff):** 25\u202f% of the granted options vest.  \n  - **Months\u202f13\u202f\u2013\u202f48:** The remaining 75\u202f% vest in equal monthly installments of **2.083\u202f%** each month, at the end of each completed calendar month.\n\n\ud83d\udcda **Sources Cited:**  \n- *esop_equity_incentive_plan.md* (Chunk\u202fesop_equity_incentive_plan_1)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing the correct cliff period, vesting schedule, percentages, and monthly rate.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_32",
+      "category": "multi_doc",
+      "question_type": "multi_doc",
+      "question": "What is the mandatory notice period for confirmed engineers upon resignation, and when is the Full and Final (F&F) settlement disbursed after their last working day?",
+      "ground_truth": "Confirmed engineers (Bands 1 to 3) have a mandatory notice period of 90 calendar days upon resignation. Following their Last Working Day (LWD) and completion of clearances, the Full and Final (F&F) settlement is audited and disbursed within 30 to 45 calendar days.",
+      "retrieved_sources": [
+        "employee_handbook.md",
+        "employee_handbook.md",
+        "full_and_final_settlement_timeline.md",
+        "resignation_and_notice_period.md",
+        "onboarding_hr_people_ops.md"
+      ],
+      "expected_sources": [
+        "resignation_and_notice_period.md",
+        "full_and_final_settlement_timeline.md"
+      ],
+      "hit": 1,
+      "mrr": 0.3333333333333333,
+      "candidate_answer": "**Mandatory Notice Period for Confirmed Engineers**\n\n- **90 calendar days** notice is required for confirmed engineers (Bands\u202f1\u20113) when resigning.\n\n**Full & Final (F&F) Settlement Disbursement**\n\n- The settlement is **calculated, audited, and paid within 30\u202fto\u202f45 calendar days** after the employee\u2019s verified Last Working Day (LWD), provided all departmental clearances are completed.\n\n---\n\n\ud83d\udcda **Sources Cited:**\n- `employee_handbook.md` \u2013 Chunk `employee_handbook_26`\n- `resignation_and_notice_period.md` \u2013 Chunk `resignation_and_notice_period_1`\n- `employee_handbook.md` \u2013 Chunk `employee_handbook_27`\n- `full_and_final_settlement_timeline.md` \u2013 Chunk `full_and_final_settlement_timeline_1`",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing the correct 90\u2011day notice period and the 30\u201145 day F&F settlement timeline with required clearances.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_33",
+      "category": "multi_doc",
+      "question_type": "multi_doc",
+      "question": "How much accumulated Earned Leave can an employee encash upon separation, and what formula is used in the Full and Final settlement?",
+      "ground_truth": "Upon separation, an employee can encash up to a maximum statutory cap of 45 working days of accumulated unavailed Earned Leave. The encashment is calculated as (Monthly Basic Salary / 30) multiplied by the number of accumulated days.",
+      "retrieved_sources": [
+        "leave_policy_earned_vacation.md",
+        "full_and_final_settlement_timeline.md",
+        "employee_handbook.md",
+        "full_and_final_settlement_timeline.md",
+        "full_and_final_settlement_timeline.md"
+      ],
+      "expected_sources": [
+        "leave_policy_earned_vacation.md",
+        "full_and_final_settlement_timeline.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Encashable Earned Leave on Separation**\n\n- **Maximum days:** An employee may encash up to **45 working days** of accumulated Earned Leave (EL) when resigning, retiring, or being terminated. Any balance beyond 45 days lapses without compensation.  \n- **Formula used in the Full & Final (F&F) settlement:**  \n\n  \\[\n  \\text{EL Encashment} = \\frac{\\text{Basic Salary}}{30} \\times \\text{Accumulated EL Days (capped at 45)}\n  \\]\n\n  - *Basic Salary* = monthly basic pay.  \n  - *30* = standard number of days used for per\u2011day salary calculation.  \n  - *Accumulated EL Days* = the actual leave balance, limited to a maximum of 45 days.\n\n**Sources Cited**\n\n- `leave_policy_earned_vacation.md` (section \u201cAccumulation, Carry-Forward & Encashment\u201d)  \n- `full_and_final_settlement_timeline.md` (section \u201c3.1 Credit Items (Earnings) \u2013 Encashment of accumulated, unavailed Earned Leave\u201d)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states the 45\u2011day cap and provides the exact (Monthly Basic Salary\u202f\u00f7\u202f30)\u202f\u00d7\u202fdays formula matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_34",
+      "category": "multi_doc",
+      "question_type": "multi_doc",
+      "question": "What total financial assistance is available for an employee setting up and operating their home workstation, combining one-time equipment and ongoing monthly internet subsidies?",
+      "ground_truth": "For remote work setup, NexaTech provides a one-time ergonomic setup allowance of up to \u20b915,000 INR (claimable within 90 days of confirmation) plus an ongoing monthly broadband internet reimbursement of up to \u20b91,500 INR per month.",
+      "retrieved_sources": [
+        "hardware_asset_management.md",
+        "remote_work_ergonomics_stipend.md",
+        "relocation_assistance_policy.md",
+        "remote_work_ergonomics_stipend.md",
+        "employee_handbook.md"
+      ],
+      "expected_sources": [
+        "hardware_asset_management.md",
+        "remote_work_ergonomics_stipend.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**One\u2011time equipment allowance**\n\n- Employees are eligible for a **one\u2011time reimbursement of up to\u202f\u20b915,000\u202fINR** to purchase approved ergonomic items for their home workspace (e.g., chair, desk, monitor stand, UPS).  \n- The claim must be submitted via the NexaPortal Expense Module under *Remote Ergonomic Allowance* within\u202f90\u202fdays of employment confirmation.  \n\n**Ongoing monthly internet subsidy**\n\n- The provided documentation does not contain details on the amount, eligibility, or claim process for a recurring internet subsidy.\n\n**Combined total**\n\n- Based on the available records, the only quantified assistance is the **\u20b915,000\u202fINR one\u2011time ergonomic setup allowance**.  \n- Without the internet subsidy figures, a total combined amount cannot be calculated.\n\n---\n\n\ud83d\udcda **Sources Cited:**\n- `hardware_asset_management.md` (Remote Ergonomic Setup Allowance)\n- `remote_work_ergonomics_stipend.md` (One\u2011Time Home Ergonomic Setup Allowance)",
+      "correctness_score": 0.5,
+      "judge_reason": "Provides the correct one-time \u20b915,000 allowance but fails to include the \u20b91,500 monthly internet subsidy, resulting in an incomplete total.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_35",
+      "category": "multi_doc",
+      "question_type": "multi_doc",
+      "question": "For a female employee having a baby via Caesarean delivery, what is her paid maternity leave duration and what is the health insurance coverage limit for the surgery?",
+      "ground_truth": "A female employee is entitled to 26 continuous calendar weeks (182 calendar days) of fully paid maternity leave. Under the Group Medical Insurance, Caesarean (C-section) delivery expenses are covered up to \u20b91,00,000 INR, with the standard 9-month waiting period waived from Day 1.",
+      "retrieved_sources": [
+        "parental_maternity_paternity_leave.md",
+        "health_insurance_benefits.md",
+        "parental_maternity_paternity_leave.md",
+        "employee_handbook.md",
+        "employee_handbook.md"
+      ],
+      "expected_sources": [
+        "parental_maternity_paternity_leave.md",
+        "health_insurance_benefits.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Paid Maternity Leave**\n\n- **Duration:** 26 continuous calendar weeks (182 calendar days) of fully\u2011paid leave for a biological mother (up to her second child).  \n- **Eligibility:** Must have completed at least 80 working days in the 12 months before the expected delivery date.\n\n**Health\u2011Insurance Coverage for Caesarean (C\u2011Section)**  \n\n- **Maximum reimbursable amount:** **\u20b91,00,000 INR** for a maternity Caesarean delivery.\n\n---\n\n\ud83d\udcda **Sources Cited:**\n- *parental_maternity_paternity_leave.md* \u2013 Chunk **parental_maternity_paternity_leave_1**\n- *health_insurance_benefits.md* \u2013 Chunk **health_insurance_benefits_7**",
+      "correctness_score": 1.0,
+      "judge_reason": "Provides the exact 26\u2011week (182\u2011day) paid leave and the \u20b91,00,000 coverage limit, matching the ground truth.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_36",
+      "category": "multi_doc",
+      "question_type": "multi_doc",
+      "question": "When an employee leaves the company, how long do they have to exercise their vested ESOP options, and within how many days of the F&F monetary disbursement are their relieving letter and experience certificate issued?",
+      "ground_truth": "Departing employees have 90 calendar days following their Last Working Day to exercise vested ESOP options. Their official Relieving Letter and Service and Experience Certificate are issued within 5 business days of the Full & Final monetary disbursement.",
+      "retrieved_sources": [
+        "esop_equity_incentive_plan.md",
+        "full_and_final_settlement_timeline.md",
+        "employee_handbook.md",
+        "leave_policy_earned_vacation.md",
+        "full_and_final_settlement_timeline.md"
+      ],
+      "expected_sources": [
+        "esop_equity_incentive_plan.md",
+        "full_and_final_settlement_timeline.md"
+      ],
+      "hit": 1,
+      "mrr": 1.0,
+      "candidate_answer": "**Exercise Window for Vested ESOP Options**\n\n- Departing employees have **90 calendar days** from their Last Working Day to exercise any vested ESOP options. Unexercised options revert to the corporate ESOP pool after this period.\n\n**Issuance of Relieving Letter & Experience Certificate**\n\n- The People Operations Desk issues the **Service and Experience Certificate** and the **Relieving Letter** **within\u202f5 business days** after the Full &\u202fFinal (F&F) monetary disbursement.\n\n---\n\n\ud83d\udcda **Sources Cited:**\n- *esop_equity_incentive_plan.md* (Section\u202f3 \u2013 Post\u2011Separation Exercise Window)\n- *full_and_final_settlement_timeline.md* (Section\u202f4 \u2013 Post\u2011Separation Documentation Release)",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer exactly matches the ground truth, providing the correct 90\u2011day ESOP exercise window and the 5\u2011business\u2011day issuance timeline.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_37",
+      "category": "unanswerable",
+      "question_type": "unanswerable",
+      "question": "What is NexaTech's reimbursement policy and annual allowance for veterinary care and domestic pet insurance?",
+      "ground_truth": "I don't have enough information on that in our company records. NexaTech's published policies do not cover pet insurance or veterinary care reimbursement.",
+      "retrieved_sources": [
+        "health_insurance_benefits.md",
+        "remote_work_ergonomics_stipend.md",
+        "health_insurance_benefits.md",
+        "buddy_program_guidelines.md",
+        "travel_expense_reimbursement.md"
+      ],
+      "expected_sources": [],
+      "hit": null,
+      "mrr": null,
+      "candidate_answer": "I don't have enough information on that in our company records.\n\n\ud83d\udcda **Sources Cited:**\n- health_insurance_benefits.md\n- remote_work_ergonomics_stipend.md\n- buddy_program_guidelines.md\n- travel_expense_reimbursement.md",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly states lack of information without fabricating policy details.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_38",
+      "category": "unanswerable",
+      "question_type": "unanswerable",
+      "question": "What are the rules and safety clearance procedures for employees flying personal recreational drones inside the engineering bays?",
+      "ground_truth": "I don't have enough information on that in our company records. There is no policy permitting or governing recreational drone flight inside NexaTech delivery centers.",
+      "retrieved_sources": [
+        "offshore_development_center_odc_rules.md",
+        "visitor_policy.md",
+        "corporate_security_surveillance.md",
+        "hardware_asset_management.md",
+        "shift_timing_and_night_allowance.md"
+      ],
+      "expected_sources": [],
+      "hit": null,
+      "mrr": null,
+      "candidate_answer": "I don't have enough information on that in our company records.\n\n\ud83d\udcda **Sources Cited:**\n- offshore_development_center_odc_rules.md\n- visitor_policy.md\n- corporate_security_surveillance.md\n- hardware_asset_management.md\n- shift_timing_and_night_allowance.md",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly declines, stating insufficient information, without adding any fabricated policy details.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_39",
+      "category": "unanswerable",
+      "question_type": "unanswerable",
+      "question": "How much corporate employee discount does NexaTech provide for commercial sub-orbital space flights on Virgin Galactic or SpaceX?",
+      "ground_truth": "I don't have enough information on that in our company records. NexaTech does not offer corporate partnerships or discounts for commercial space flights.",
+      "retrieved_sources": [
+        "remote_work_ergonomics_stipend.md",
+        "employee_handbook.md",
+        "relocation_deputation_overseas_policy.md",
+        "buddy_program_guidelines.md",
+        "travel_expense_reimbursement.md"
+      ],
+      "expected_sources": [],
+      "hit": null,
+      "mrr": null,
+      "candidate_answer": "I don't have enough information on that in our company records.\n\n\ud83d\udcda **Sources Cited:**\n- remote_work_ergonomics_stipend.md\n- employee_handbook.md\n- relocation_deputation_overseas_policy.md\n- buddy_program_guidelines.md\n- travel_expense_reimbursement.md",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly declines to provide information, stating it is not available in company records, without hallucinating any policy details.",
+      "judge_method": "llm_judge"
+    },
+    {
+      "id": "eval_40",
+      "category": "unanswerable",
+      "question_type": "unanswerable",
+      "question": "What is the procedure for opting to receive 50% of monthly salary in Bitcoin or Ethereum cryptocurrency?",
+      "ground_truth": "I don't have enough information on that in our company records. NexaTech disburses compensation exclusively via direct bank transfer in statutory fiat currency (INR) and does not support cryptocurrency payroll.",
+      "retrieved_sources": [
+        "employee_handbook.md",
+        "payroll_salary_structure.md",
+        "provident_fund_gratuity_guide.md",
+        "payroll_salary_structure.md",
+        "payroll_salary_structure.md"
+      ],
+      "expected_sources": [],
+      "hit": null,
+      "mrr": null,
+      "candidate_answer": "I don't have enough information on that in our company records.\n\n\ud83d\udcda **Sources Cited:**\n- employee_handbook.md\n- payroll_salary_structure.md\n- provident_fund_gratuity_guide.md",
+      "correctness_score": 1.0,
+      "judge_reason": "The answer correctly declines, stating lack of information, without adding any inaccurate details.",
+      "judge_method": "llm_judge"
+    }
+  ]
+}

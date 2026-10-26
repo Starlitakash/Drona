@@ -35,11 +35,12 @@ def get_qdrant_client() -> QdrantClient:
     """Connects to Qdrant Cloud if credentials exist, otherwise falls back to local storage."""
     if QDRANT_URL:
         print(f"[Qdrant] Connecting to Qdrant Cloud: {QDRANT_URL}")
-        return QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
-    return QdrantClient(path=STORAGE_PATH)
+        return QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY, timeout=60.0)
+    return QdrantClient(path=STORAGE_PATH, timeout=60.0)
 
 
 client = get_qdrant_client()
+_collection_verified = False
 
 # Text chunking configuration (~800 characters with 100 character overlap)
 text_splitter = RecursiveCharacterTextSplitter(
@@ -160,7 +161,7 @@ def ingest_all_documents(docs_dir: str = "docs", recreate: bool = True) -> Dict[
             all_chunks.append(chunk_clean)
             chunk_id = f"{file_path.stem}_{idx}"
             stable_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"{file_path.name}::{idx}"))
-            all_ids.append(stable_id)
+            all_ids.append(stable_id)       
 
             all_payloads.append({
                 "chunk_id": chunk_id,
@@ -282,17 +283,42 @@ def search_bm25(query: str, limit: int = 20) -> List[Dict[str, Any]]:
 # ---------------- VECTOR DENSE SEARCH ----------------
 
 def search_dense_vectors(query: str, limit: int = 20) -> List[Dict[str, Any]]:
-    """Returns top semantic matches from Qdrant vector space."""
-    if not client.collection_exists(COLLECTION_NAME) or not query.strip():
+    """Returns top semantic matches from Qdrant vector space with automatic retry on network blips."""
+    global _collection_verified
+    if not query.strip():
         return []
 
+    if not _collection_verified:
+        try:
+            if not client.collection_exists(COLLECTION_NAME):
+                return []
+            _collection_verified = True
+        except Exception as e:
+            print(f"[Qdrant Connection Warning]: {e}")
+
     query_vector = embedding_model.encode(query, normalize_embeddings=True).tolist()
-    response = client.query_points(
-        collection_name=COLLECTION_NAME,
-        query=query_vector,
-        limit=limit,
-        with_payload=True
-    )
+    
+    # Retry with exponential backoff on intermittent SSL/connection drops
+    response = None
+    for attempt in range(1, 4):
+        try:
+            response = client.query_points(
+                collection_name=COLLECTION_NAME,
+                query=query_vector,
+                limit=limit,
+                with_payload=True
+            )
+            break
+        except Exception as e:
+            print(f"[Qdrant query_points attempt {attempt} failed]: {e}")
+            if attempt < 3:
+                import time
+                time.sleep(1.5 * attempt)
+            else:
+                return []
+
+    if not response:
+        return []
 
     matches = []
     for hit in response.points:

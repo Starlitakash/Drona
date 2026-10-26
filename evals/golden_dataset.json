@@ -1,0 +1,362 @@
+[
+  {
+    "id": "eval_01",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "How many days of paid maternity leave are female employees entitled to at NexaTech?",
+    "ground_truth_answer": "Female employees expecting up to two surviving children are entitled to 26 continuous calendar weeks (182 calendar days) of fully paid maternity leave, provided they worked at NexaTech for at least 80 working days in the preceding 12 months.",
+    "expected_sources": ["parental_maternity_paternity_leave.md"],
+    "expected_keywords": ["26", "182", "maternity", "calendar days", "weeks"]
+  },
+  {
+    "id": "eval_02",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "What is the paternity leave entitlement for new fathers and within what time window must it be availed?",
+    "ground_truth_answer": "Male employees are entitled to 15 working days of fully paid paternity leave upon childbirth or legal adoption of a child under 1 year. It can be availed in up to two tranches within 6 months of childbirth.",
+    "expected_sources": ["parental_maternity_paternity_leave.md"],
+    "expected_keywords": ["15 working days", "6 months", "paternity"]
+  },
+  {
+    "id": "eval_03",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "How many casual leave days do employees get per year, and what is the maximum consecutive days allowed?",
+    "ground_truth_answer": "Employees receive 12 calendar days of Casual Leave (CL) per year (accrued at 3 days per quarter). It can be taken for a maximum of 3 consecutive business days at a time.",
+    "expected_sources": ["leave_policy_casual_sick.md"],
+    "expected_keywords": ["12", "3", "consecutive", "quarter"]
+  },
+  {
+    "id": "eval_04",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "When is a medical fitness certificate required for taking sick leave?",
+    "ground_truth_answer": "A valid medical fitness certificate and prescription from a registered medical practitioner is required when sick leave exceeds 2 consecutive business days (i.e. 3 or more days). For 1 or 2 days, a self-declaration on NexaPortal is sufficient.",
+    "expected_sources": ["leave_policy_casual_sick.md"],
+    "expected_keywords": ["medical certificate", "2 consecutive", "prescription", "NexaPortal"]
+  },
+  {
+    "id": "eval_05",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "What is the annual accrual rate and maximum accumulation limit for Earned Leave?",
+    "ground_truth_answer": "Employees earn 18 working days of Earned Leave (EL) per calendar year, accruing at 1.5 days per completed calendar month. Employees can accumulate up to a maximum of 45 working days.",
+    "expected_sources": ["leave_policy_earned_vacation.md"],
+    "expected_keywords": ["18 working days", "1.5", "45", "accumulate"]
+  },
+  {
+    "id": "eval_06",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "What is the base sum insured under NexaTech's Group Medical Insurance and who is covered?",
+    "ground_truth_answer": "The base sum insured is ₹5,00,000 INR per annum on a family floater basis, 100% premium sponsored by NexaTech. It covers Employee + Spouse + up to 2 Dependent Children (Option A) or Employee + 2 Dependent Parents/Parents-in-law (Option B).",
+    "expected_sources": ["health_insurance_benefits.md"],
+    "expected_keywords": ["5,00,000", "family floater", "spouse", "children"]
+  },
+  {
+    "id": "eval_07",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "What are the health insurance coverage sub-limits for normal and caesarean deliveries?",
+    "ground_truth_answer": "Under NexaTech's medical policy, the normal delivery maternity limit is up to ₹75,000 INR, and the caesarean (C-section) limit is up to ₹1,00,000 INR. The standard 9-month waiting period is waived from Day 1.",
+    "expected_sources": ["health_insurance_benefits.md"],
+    "expected_keywords": ["75,000", "1,00,000", "normal", "caesarean", "c-section"]
+  },
+  {
+    "id": "eval_08",
+    "category": "hr_benefits",
+    "question_type": "single_doc",
+    "question": "What is the annual Outpatient Department (OPD) and dental/vision allowance per employee?",
+    "ground_truth_answer": "NexaTech provides an annual OPD, dental, and vision reimbursement allowance of ₹10,000 INR per financial year per employee, claimable via the MediBuddy app.",
+    "expected_sources": ["health_insurance_benefits.md"],
+    "expected_keywords": ["10,000", "OPD", "MediBuddy", "dental", "vision"]
+  },
+  {
+    "id": "eval_09",
+    "category": "travel_and_expense",
+    "question_type": "single_doc",
+    "question": "Who must approve a Travel Authorization Request (TAR) if the estimated cost exceeds ₹2,00,000 INR or involves international travel?",
+    "ground_truth_answer": "TARs with estimated cost exceeding ₹2,00,000 INR or involving international travel require approval from the Reporting Manager, the Practice/Business Unit Head, and the Chief Financial Officer (CFO).",
+    "expected_sources": ["travel_expense_reimbursement.md"],
+    "expected_keywords": ["Reporting Manager", "BU Head", "Chief Financial Officer", "CFO", "2,00,000"]
+  },
+  {
+    "id": "eval_10",
+    "category": "travel_and_expense",
+    "question_type": "single_doc",
+    "question": "What is the nightly hotel room rate reimbursement cap for Band 1 to Band 3 engineers in Tier 1 metro cities?",
+    "ground_truth_answer": "For Band 1 - Band 3 employees (Engineers, Analysts, Senior SDEs), the hotel room rate cap in Tier 1 Metros is up to ₹4,500 INR per night (exclusive of GST/taxes).",
+    "expected_sources": ["travel_expense_reimbursement.md"],
+    "expected_keywords": ["4,500", "Tier 1", "Band 1", "night"]
+  },
+  {
+    "id": "eval_11",
+    "category": "travel_and_expense",
+    "question_type": "single_doc",
+    "question": "What is the maximum hotel allowance and daily meal per diem for official business travel to Greater London?",
+    "ground_truth_answer": "For business travel to Greater London, the maximum hotel cap is up to £180 GBP per night, and the daily food and incidental per diem is £65 GBP per day.",
+    "expected_sources": ["travel_expense_reimbursement.md"],
+    "expected_keywords": ["180", "65", "GBP", "London"]
+  },
+  {
+    "id": "eval_12",
+    "category": "travel_and_expense",
+    "question_type": "single_doc",
+    "question": "What is the daily meal allowance in Tier 1 cities for receipt-based reimbursement versus flat per diem?",
+    "ground_truth_answer": "In Tier 1 cities, receipt-based meal reimbursement is capped at up to ₹1,200 per day, while the flat per diem (no receipts required, credited via payroll) is ₹750 per day.",
+    "expected_sources": ["travel_expense_reimbursement.md"],
+    "expected_keywords": ["1,200", "750", "Tier 1", "per diem"]
+  },
+  {
+    "id": "eval_13",
+    "category": "travel_and_expense",
+    "question_type": "single_doc",
+    "question": "Within how many calendar days must travel expense reimbursement claims be filed?",
+    "ground_truth_answer": "Travel expense reimbursement claims must be filed via NexaPortal within 15 calendar days of completing travel. Claims submitted after 30 days are automatically forfeited and rejected.",
+    "expected_sources": ["travel_expense_reimbursement.md"],
+    "expected_keywords": ["15 calendar days", "30 days", "NexaPortal"]
+  },
+  {
+    "id": "eval_14",
+    "category": "travel_and_expense",
+    "question_type": "single_doc",
+    "question": "What is the per-person spending ceiling for client entertainment business meals hosted in India?",
+    "ground_truth_answer": "Client entertainment business meals hosted by senior team members (Band 4+) in India have a spending ceiling of maximum ₹3,000 INR per person, subject to prior written approval from the BU Head.",
+    "expected_sources": ["travel_expense_reimbursement.md"],
+    "expected_keywords": ["3,000", "per person", "BU Head", "client entertainment"]
+  },
+  {
+    "id": "eval_15",
+    "category": "engineering_and_devops",
+    "question_type": "single_doc",
+    "question": "What is the initial response SLA and war room mandate for a SEV-1 critical incident?",
+    "ground_truth_answer": "For a SEV-1 critical outage, the initial response SLA is 10 minutes. It mandates an immediate 24/7 video bridge and dedicated Slack channel #incident-sev1 with notification to Executive Leadership, BU Head, CISO, and Lead SRE.",
+    "expected_sources": ["incident_response_sre_runbook.md"],
+    "expected_keywords": ["10 Minutes", "SEV-1", "#incident-sev1", "war room"]
+  },
+  {
+    "id": "eval_16",
+    "category": "engineering_and_devops",
+    "question_type": "single_doc",
+    "question": "What are the core responsibilities of an Incident Commander during a major outage?",
+    "ground_truth_answer": "The Incident Commander holds single-point operational authority over the incident, directs troubleshooting paths, enforces timeboxes, and authorizes failovers. The IC does NOT write code or execute terminal commands directly.",
+    "expected_sources": ["incident_response_sre_runbook.md"],
+    "expected_keywords": ["Incident Commander", "operational authority", "troubleshooting", "not write code"]
+  },
+  {
+    "id": "eval_17",
+    "category": "engineering_and_devops",
+    "question_type": "single_doc",
+    "question": "What is the weekly on-call readiness allowance for primary and secondary SRE engineers?",
+    "ground_truth_answer": "Engineers rostered as primary on-call receive an on-call readiness allowance of ₹12,000 INR per week, while secondary on-call engineers receive ₹6,000 INR per week.",
+    "expected_sources": ["incident_response_sre_runbook.md"],
+    "expected_keywords": ["12,000", "6,000", "primary", "secondary", "week"]
+  },
+  {
+    "id": "eval_18",
+    "category": "engineering_and_devops",
+    "question_type": "single_doc",
+    "question": "Within what timeframe must draft Root Cause Analysis (RCA) documents be published for SEV-1 and SEV-2 incidents?",
+    "ground_truth_answer": "A draft RCA must be published within 48 hours of incident resolution for SEV-1 incidents, and within 72 hours for SEV-2 incidents.",
+    "expected_sources": ["incident_response_sre_runbook.md"],
+    "expected_keywords": ["48 hours", "72 hours", "RCA", "SEV-1", "SEV-2"]
+  },
+  {
+    "id": "eval_19",
+    "category": "engineering_and_devops",
+    "question_type": "single_doc",
+    "question": "What compensation is provided to engineers engaged in after-hours incident response between 10:00 PM and 6:00 AM IST?",
+    "ground_truth_answer": "If engaged after-hours between 10:00 PM and 6:00 AM IST, engineers receive 1 day of compensatory off (Comp-Off) plus an incident allowance of ₹2,500 INR per night engaged.",
+    "expected_sources": ["incident_response_sre_runbook.md"],
+    "expected_keywords": ["Comp-Off", "2,500", "1 day", "after-hours"]
+  },
+  {
+    "id": "eval_20",
+    "category": "engineering_and_devops",
+    "question_type": "single_doc",
+    "question": "What are the minimum password length and rotation frequency requirements under NexaTech security standards?",
+    "ground_truth_answer": "NexaTech requires a minimum password length of 14 alphanumeric characters (with uppercase, lowercase, number, and special symbol). Mandatory password expiration and change is enforced every 90 calendar days.",
+    "expected_sources": ["password_authentication_standards.md"],
+    "expected_keywords": ["14", "90 calendar days", "uppercase", "special symbol"]
+  },
+  {
+    "id": "eval_21",
+    "category": "it_and_workplace",
+    "question_type": "single_doc",
+    "question": "What is the standard hardware budget and device models for Software Engineers and DevOps in Band 1 to Band 3?",
+    "ground_truth_answer": "Software Engineers and DevOps (Band 1 - Band 3) receive a High-Performance Engineering Workstation with a budget ceiling up to ₹2,20,000 INR. Standard models are Apple MacBook Pro 16\" (M3 Pro, 36GB RAM, 1TB SSD) or Dell XPS 15 (i7, 32GB RAM, 1TB SSD).",
+    "expected_sources": ["hardware_asset_management.md"],
+    "expected_keywords": ["2,20,000", "MacBook Pro", "Dell XPS", "36GB", "Band 1"]
+  },
+  {
+    "id": "eval_22",
+    "category": "it_and_workplace",
+    "question_type": "single_doc",
+    "question": "What is the hardware budget ceiling for Principal Architects and Technical Directors (Band 4+)?",
+    "ground_truth_answer": "Principal Architects, Technical Directors, and AI/ML Specialists (Band 4+) are allocated Advanced Compute/AI Workstations with a budget ceiling of up to ₹3,20,000 INR (e.g. MacBook Pro 16\" M3 Max 64GB or ThinkPad P1 Gen 7 RTX 4070).",
+    "expected_sources": ["hardware_asset_management.md"],
+    "expected_keywords": ["3,20,000", "Band 4", "M3 Max", "64GB"]
+  },
+  {
+    "id": "eval_23",
+    "category": "it_and_workplace",
+    "question_type": "single_doc",
+    "question": "What is the laptop hardware refresh cycle and what buy-back option is available to employees?",
+    "ground_truth_answer": "Laptops have a standard refresh cycle of 36 months (3 years). Upon completion of 36 months, employees may purchase their decommissioned laptop at depreciated salvage value (typically 10% to 15% of invoice value) following data sanitization.",
+    "expected_sources": ["hardware_asset_management.md"],
+    "expected_keywords": ["36 months", "3 years", "buy-back", "10%", "15%"]
+  },
+  {
+    "id": "eval_24",
+    "category": "it_and_workplace",
+    "question_type": "single_doc",
+    "question": "What is the monthly broadband reimbursement limit and what is the submission deadline?",
+    "ground_truth_answer": "NexaTech reimburses up to ₹1,500 INR per month (inclusive of GST) toward home broadband internet bills. Claims must be submitted via NexaPortal within 30 calendar days of invoice generation.",
+    "expected_sources": ["remote_work_ergonomics_stipend.md"],
+    "expected_keywords": ["1,500", "broadband", "30 calendar days", "NexaPortal"]
+  },
+  {
+    "id": "eval_25",
+    "category": "it_and_workplace",
+    "question_type": "single_doc",
+    "question": "What is the one-time home ergonomic setup allowance limit and claim window?",
+    "ground_truth_answer": "Confirmed full-time employees are entitled to a one-time reimbursement of up to ₹15,000 INR for ergonomic office equipment (task chair, sit-stand desk, monitor arms, router UPS), claimable within 90 calendar days of confirmation.",
+    "expected_sources": ["remote_work_ergonomics_stipend.md"],
+    "expected_keywords": ["15,000", "ergonomic", "90 calendar days", "chair"]
+  },
+  {
+    "id": "eval_26",
+    "category": "it_and_workplace",
+    "question_type": "single_doc",
+    "question": "What are the core business hours and mandatory in-office anchor days under the hybrid policy?",
+    "ground_truth_answer": "Under the 3+2 hybrid model, employees work 3 days in-office and 2 days remote. Mandatory in-office anchor days are Tuesdays and Thursdays, and core business hours are 10:00 AM to 4:00 PM IST.",
+    "expected_sources": ["work_from_home_hybrid_policy.md"],
+    "expected_keywords": ["3+2", "Tuesdays", "Thursdays", "10:00 AM", "4:00 PM", "Core"]
+  },
+  {
+    "id": "eval_27",
+    "category": "compensation_and_payroll",
+    "question_type": "single_doc",
+    "question": "What is the referral bounty for hiring a Band 3 Senior SDE, and how much is it for a diversity candidate?",
+    "ground_truth_answer": "For Band 3 (Senior SDE / Technical Lead), the standard referral bounty is ₹50,000 INR, while the bounty for a niche skill or diversity candidate is ₹75,000 INR.",
+    "expected_sources": ["referral_bonus_policy.md"],
+    "expected_keywords": ["50,000", "75,000", "Band 3", "diversity"]
+  },
+  {
+    "id": "eval_28",
+    "category": "compensation_and_payroll",
+    "question_type": "single_doc",
+    "question": "How are employee referral bonuses disbursed across tranches?",
+    "ground_truth_answer": "Referral bounties are disbursed in two equal 50% tranches: Tranche 1 (50%) is paid in the payroll cycle immediately following the candidate's joining date, and Tranche 2 (50%) is paid following successful 90-day probationary confirmation.",
+    "expected_sources": ["referral_bonus_policy.md"],
+    "expected_keywords": ["two equal", "50%", "joining", "90-day", "confirmation"]
+  },
+  {
+    "id": "eval_29",
+    "category": "compensation_and_payroll",
+    "question_type": "single_doc",
+    "question": "What are the hours and per-shift allowance for the night shift (US hours)?",
+    "ground_truth_answer": "The Night Shift operates from 10:00 PM to 06:30 AM IST and provides an allowance of ₹800 INR per active shift worked, along with dedicated door-to-door transport with security escort.",
+    "expected_sources": ["shift_timing_and_night_allowance.md"],
+    "expected_keywords": ["10:00 PM", "06:30 AM", "800", "Night Shift"]
+  },
+  {
+    "id": "eval_30",
+    "category": "compensation_and_payroll",
+    "question_type": "single_doc",
+    "question": "What is the maximum limit on consecutive night shifts an employee can be scheduled to work?",
+    "ground_truth_answer": "No employee may be scheduled for more than 5 consecutive night shifts. After 5 consecutive night shifts, a mandatory rest window of at least 48 continuous hours is enforced.",
+    "expected_sources": ["shift_timing_and_night_allowance.md"],
+    "expected_keywords": ["5 consecutive", "48 continuous hours", "rest"]
+  },
+  {
+    "id": "eval_31",
+    "category": "compensation_and_payroll",
+    "question_type": "single_doc",
+    "question": "What is the vesting schedule and cliff period for NexaTech's Employee Stock Option Plan (ESOP)?",
+    "ground_truth_answer": "The ESOP scheme follows a 4-year graded vesting schedule with a 1-year cliff: 25% of granted options vest at Month 12 (1st anniversary), and the remaining 75% vests in equal monthly increments of 2.083% across Months 13 to 48.",
+    "expected_sources": ["esop_equity_incentive_plan.md"],
+    "expected_keywords": ["4-year", "1-year cliff", "25%", "75%", "2.083%"]
+  },
+  {
+    "id": "eval_32",
+    "category": "multi_doc",
+    "question_type": "multi_doc",
+    "question": "What is the mandatory notice period for confirmed engineers upon resignation, and when is the Full and Final (F&F) settlement disbursed after their last working day?",
+    "ground_truth_answer": "Confirmed engineers (Bands 1 to 3) have a mandatory notice period of 90 calendar days upon resignation. Following their Last Working Day (LWD) and completion of clearances, the Full and Final (F&F) settlement is audited and disbursed within 30 to 45 calendar days.",
+    "expected_sources": ["resignation_and_notice_period.md", "full_and_final_settlement_timeline.md"],
+    "expected_keywords": ["90 calendar days", "30 to 45", "Last Working Day", "settlement"]
+  },
+  {
+    "id": "eval_33",
+    "category": "multi_doc",
+    "question_type": "multi_doc",
+    "question": "How much accumulated Earned Leave can an employee encash upon separation, and what formula is used in the Full and Final settlement?",
+    "ground_truth_answer": "Upon separation, an employee can encash up to a maximum statutory cap of 45 working days of accumulated unavailed Earned Leave. The encashment is calculated as (Monthly Basic Salary / 30) multiplied by the number of accumulated days.",
+    "expected_sources": ["leave_policy_earned_vacation.md", "full_and_final_settlement_timeline.md"],
+    "expected_keywords": ["45", "Basic Salary", "30", "encashment", "Full and Final"]
+  },
+  {
+    "id": "eval_34",
+    "category": "multi_doc",
+    "question_type": "multi_doc",
+    "question": "What total financial assistance is available for an employee setting up and operating their home workstation, combining one-time equipment and ongoing monthly internet subsidies?",
+    "ground_truth_answer": "For remote work setup, NexaTech provides a one-time ergonomic setup allowance of up to ₹15,000 INR (claimable within 90 days of confirmation) plus an ongoing monthly broadband internet reimbursement of up to ₹1,500 INR per month.",
+    "expected_sources": ["hardware_asset_management.md", "remote_work_ergonomics_stipend.md"],
+    "expected_keywords": ["15,000", "1,500", "ergonomic", "broadband", "monthly"]
+  },
+  {
+    "id": "eval_35",
+    "category": "multi_doc",
+    "question_type": "multi_doc",
+    "question": "For a female employee having a baby via Caesarean delivery, what is her paid maternity leave duration and what is the health insurance coverage limit for the surgery?",
+    "ground_truth_answer": "A female employee is entitled to 26 continuous calendar weeks (182 calendar days) of fully paid maternity leave. Under the Group Medical Insurance, Caesarean (C-section) delivery expenses are covered up to ₹1,00,000 INR, with the standard 9-month waiting period waived from Day 1.",
+    "expected_sources": ["parental_maternity_paternity_leave.md", "health_insurance_benefits.md"],
+    "expected_keywords": ["26 weeks", "182 calendar days", "1,00,000", "Caesarean", "C-section"]
+  },
+  {
+    "id": "eval_36",
+    "category": "multi_doc",
+    "question_type": "multi_doc",
+    "question": "When an employee leaves the company, how long do they have to exercise their vested ESOP options, and within how many days of the F&F monetary disbursement are their relieving letter and experience certificate issued?",
+    "ground_truth_answer": "Departing employees have 90 calendar days following their Last Working Day to exercise vested ESOP options. Their official Relieving Letter and Service and Experience Certificate are issued within 5 business days of the Full & Final monetary disbursement.",
+    "expected_sources": ["esop_equity_incentive_plan.md", "full_and_final_settlement_timeline.md"],
+    "expected_keywords": ["90 calendar days", "5 business days", "exercise", "Relieving Letter", "ESOP"]
+  },
+  {
+    "id": "eval_37",
+    "category": "unanswerable",
+    "question_type": "unanswerable",
+    "question": "What is NexaTech's reimbursement policy and annual allowance for veterinary care and domestic pet insurance?",
+    "ground_truth_answer": "I don't have enough information on that in our company records. NexaTech's published policies do not cover pet insurance or veterinary care reimbursement.",
+    "expected_sources": [],
+    "expected_keywords": ["don't have enough information", "not", "company records"]
+  },
+  {
+    "id": "eval_38",
+    "category": "unanswerable",
+    "question_type": "unanswerable",
+    "question": "What are the rules and safety clearance procedures for employees flying personal recreational drones inside the engineering bays?",
+    "ground_truth_answer": "I don't have enough information on that in our company records. There is no policy permitting or governing recreational drone flight inside NexaTech delivery centers.",
+    "expected_sources": [],
+    "expected_keywords": ["don't have enough information", "not", "company records"]
+  },
+  {
+    "id": "eval_39",
+    "category": "unanswerable",
+    "question_type": "unanswerable",
+    "question": "How much corporate employee discount does NexaTech provide for commercial sub-orbital space flights on Virgin Galactic or SpaceX?",
+    "ground_truth_answer": "I don't have enough information on that in our company records. NexaTech does not offer corporate partnerships or discounts for commercial space flights.",
+    "expected_sources": [],
+    "expected_keywords": ["don't have enough information", "not", "company records"]
+  },
+  {
+    "id": "eval_40",
+    "category": "unanswerable",
+    "question_type": "unanswerable",
+    "question": "What is the procedure for opting to receive 50% of monthly salary in Bitcoin or Ethereum cryptocurrency?",
+    "ground_truth_answer": "I don't have enough information on that in our company records. NexaTech disburses compensation exclusively via direct bank transfer in statutory fiat currency (INR) and does not support cryptocurrency payroll.",
+    "expected_sources": [],
+    "expected_keywords": ["don't have enough information", "not", "company records"]
+  }
+]
