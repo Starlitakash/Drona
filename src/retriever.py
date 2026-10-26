@@ -415,6 +415,11 @@ def search_knowledge_base(query: str, limit: int = 5) -> List[Dict[str, Any]]:
     return hybrid_search_and_rerank(query=query, top_candidates=20, top_final=limit)
 
 
+def is_ready() -> bool:
+    """Readiness probe checking that client and models are initialized."""
+    return bool(client is not None and embedding_model is not None and reranker_model is not None)
+
+
 # ---------------- TESTING ----------------
 
 if __name__ == "__main__":

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  drona:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: drona_slack_assistant
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    # Cloud-native architecture with zero local state dependencies:
+    # - Qdrant Cloud (Vector database cluster)
+    # - Groq Cloud API (LLM inference)
+    # - Atlassian Jira Cloud (REST API v3 issue tracking)
+    # - Slack Cloud (Socket Mode bidirectional event bus)
+    # - Langfuse Cloud (Distributed tracing & observability)
+    command: ["python", "main.py", "--slack"]

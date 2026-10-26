@@ -20,6 +20,9 @@ pypdf>=5.0.0
 sentence-transformers>=3.0.0
 rank-bm25>=0.2.2
 
+# HTTP & API requests
+requests>=2.31.0
+
 # Observability & Evals
 langfuse>=2.0.0
-deepeval>=0.21.0
+pytest>=8.0.0
