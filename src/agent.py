@@ -39,7 +39,10 @@ llm = ChatGroq(
 )
 
 
-# 2. Define the Agent's State
+# 2. Define the Agent's State & Guardrail Configuration
+RERANK_THRESHOLD = float(os.getenv("RERANK_THRESHOLD", "-2.5"))
+
+
 class AgentState(TypedDict, total=False):
     question: str
     documents: List[dict]
@@ -52,6 +55,23 @@ class AgentState(TypedDict, total=False):
     ticket_priority: Optional[str]
     ticket_comment: Optional[str]
     clarifying_question: Optional[str]
+    guardrail_triggered: Optional[bool]
+
+
+def extract_section_header(chunk_text: str, default: str = "General Provisions") -> str:
+    """Extracts the most descriptive Markdown section header from chunk text."""
+    headers = re.findall(r"(?:^|\n)(#{1,4}\s+[^\n]+)", chunk_text)
+    if headers:
+        # Prefer level 2 or 3 headers (## or ###)
+        sub_headers = [h for h in headers if h.startswith("##")]
+        chosen = sub_headers[0] if sub_headers else headers[0]
+        return re.sub(r"^#+\s*", "", chosen).strip()
+
+    first_line = chunk_text.strip().split("\n")[0].strip("#* \t\r")
+    if 5 <= len(first_line) <= 60 and not first_line.endswith("."):
+        return first_line
+
+    return default
 
 
 # ----------------------------------------------------
@@ -326,40 +346,63 @@ def jira_update_node(state: AgentState) -> Dict[str, Any]:
 
 
 def rag_retrieve_node(state: AgentState) -> Dict[str, Any]:
-    """Retrieves top relevant chunks from NexaTech knowledge base using hybrid search + reranking."""
+    """Retrieves top relevant chunks and applies the rerank score threshold guardrail."""
     question = state.get("question", "")
     docs = search_knowledge_base(question, limit=5)
-    return {"documents": docs}
+
+    # Attach section header to each retrieved doc
+    for d in docs:
+        d["section_header"] = extract_section_header(d.get("text", ""))
+
+    # Check rerank score threshold (Anti-Hallucination Guardrail)
+    top_score = docs[0].get("rerank_score", -99.0) if docs else -99.0
+    if not docs or top_score < RERANK_THRESHOLD:
+        print(f"[Guardrail Check] Top score {top_score:+.4f} < threshold {RERANK_THRESHOLD}. Triggering anti-hallucination guardrail.")
+        return {
+            "documents": [],
+            "guardrail_triggered": True
+        }
+
+    return {
+        "documents": docs,
+        "guardrail_triggered": False
+    }
 
 
 def rag_generate_node(state: AgentState) -> Dict[str, Any]:
-    """Generates grounded answer strictly using retrieved NexaTech documents and cites sources."""
+    """Generates grounded answer strictly citing source documents and section headers."""
+    if state.get("guardrail_triggered"):
+        return {"answer": "I don't have enough information on that in our company records."}
+
     question = state.get("question", "")
     docs = state.get("documents", [])
 
     if not docs:
-        return {"answer": "I searched our enterprise knowledge base, but could not find relevant documentation on this topic."}
+        return {"answer": "I don't have enough information on that in our company records."}
 
-    # Format context with source metadata
+    # Format context with source metadata and section headers
     context_text = ""
-    sources_cited = []
+    citations_dict: Dict[str, List[str]] = {}
     for d in docs:
         src = d.get("source", "Unknown Document")
+        sec = d.get("section_header", "General Provisions")
         cat = d.get("category", "General")
         cid = d.get("chunk_id", "")
-        context_text += f"\n--- Document: {src} | Category: {cat} | Chunk: {cid} ---\n{d.get('text', '')}\n"
-        if src not in sources_cited:
-            sources_cited.append(src)
+        context_text += f"\n--- Document: {src} | Section: {sec} | Category: {cat} | Chunk: {cid} ---\n{d.get('text', '')}\n"
+        if src not in citations_dict:
+            citations_dict[src] = []
+        if sec not in citations_dict[src]:
+            citations_dict[src].append(sec)
 
     system_prompt = """You are 'Drona', the official enterprise AI Workplace Assistant for NexaTech Solutions.
 Answer the user's question accurately, professionally, and directly using ONLY the provided documentation context.
 
 Strict Guidelines:
-1. Ground your answer completely in the provided context. If the answer is not contained in the documents, state:
+1. Ground your answer completely in the provided context. If the answer is not explicitly found in the context, state:
    "I don't have enough information on that in our company records."
 2. Never hallucinate facts, numbers, dates, approval hierarchies, or monetary limits.
 3. Keep the tone professional, helpful, and concise. Use bullet points or markdown tables when explaining limits, approval workflows, or step-by-step procedures.
-4. At the end of your response, ALWAYS include a '📚 **Sources Cited:**' section listing the exact document filenames from which you drew the information."""
+4. At the end of your response, ALWAYS include a '📚 **Sources Cited:**' section citing the exact document filenames AND their section headers (e.g. '- document_name.md (Section: X)')."""
 
     user_prompt = f"""Context from NexaTech Knowledge Base:
 {context_text}
@@ -371,7 +414,17 @@ User Question: {question}"""
         HumanMessage(content=user_prompt)
     ])
 
-    return {"answer": response.content.strip()}
+    answer = response.content.strip()
+
+    # Ensure standardized section header citations if LLM truncated them
+    if "📚" not in answer and "Sources Cited" not in answer:
+        citations_lines = []
+        for src, secs in citations_dict.items():
+            sec_formatted = ", ".join(secs)
+            citations_lines.append(f"- *{src}* (Section: {sec_formatted})")
+        answer += "\n\n📚 **Sources Cited:**\n" + "\n".join(citations_lines)
+
+    return {"answer": answer}
 
 
 # ----------------------------------------------------
