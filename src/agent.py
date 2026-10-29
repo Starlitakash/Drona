@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.retriever import search_knowledge_base
 from src.jira_tool import create_jira_ticket, get_jira_ticket, update_jira_ticket
+from src.memory import save_message, format_history_for_llm, get_chat_history
 
 load_dotenv()
 
@@ -45,6 +46,8 @@ RERANK_THRESHOLD = float(os.getenv("RERANK_THRESHOLD", "-2.5"))
 
 class AgentState(TypedDict, total=False):
     question: str
+    thread_id: Optional[str]
+    chat_history: Optional[str]
     documents: List[dict]
     answer: str
     intent: str
@@ -121,11 +124,17 @@ def router_node(state: AgentState) -> Dict[str, Any]:
     jira_key_match = re.search(r"\b([A-Za-z]{2,10}-\d+)\b", question)
     extracted_key = jira_key_match.group(1).upper() if jira_key_match else None
 
-    # C. LLM Classification & Entity Extraction
+    # C. LLM Classification & Entity Extraction (with thread memory context)
+    history = state.get("chat_history", "").strip()
+    router_user_prompt = (
+        f"Recent Conversation History in this thread:\n{history}\n\nCurrent User Message: {question}"
+        if history else question
+    )
+
     try:
         response = llm.invoke([
             SystemMessage(content=ROUTER_SYSTEM_PROMPT),
-            HumanMessage(content=question)
+            HumanMessage(content=router_user_prompt)
         ])
         content = response.content.strip()
         # Clean any markdown code fences if LLM wrapped in ```json
@@ -404,7 +413,10 @@ Strict Guidelines:
 3. Keep the tone professional, helpful, and concise. Use bullet points or markdown tables when explaining limits, approval workflows, or step-by-step procedures.
 4. At the end of your response, ALWAYS include a '📚 **Sources Cited:**' section citing the exact document filenames AND their section headers (e.g. '- document_name.md (Section: X)')."""
 
-    user_prompt = f"""Context from NexaTech Knowledge Base:
+    history_text = state.get("chat_history", "").strip()
+    history_block = f"Recent Thread Conversation History:\n{history_text}\n\n" if history_text else ""
+
+    user_prompt = f"""{history_block}Context from Knowledge Base:
 {context_text}
 
 User Question: {question}"""
@@ -496,7 +508,11 @@ agent_app = workflow.compile(checkpointer=memory)
 # 6. Public Helper Function for Slack & Evaluator
 # ----------------------------------------------------
 
-def ask_agent(question: str, thread_id: str = "default_thread") -> Dict[str, Any]:
+def ask_agent(
+    question: str,
+    thread_id: str = "default_thread",
+    metadata: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """Runs LangGraph agent pipeline, manages thread memory, and captures Langfuse tracing."""
     callbacks = []
     trace_id = ""
@@ -508,24 +524,49 @@ def ask_agent(question: str, thread_id: str = "default_thread") -> Dict[str, Any
         except Exception as e:
             print(f"[Langfuse Warning]: {e}")
 
+    # 1. Retrieve recent thread dialogue turns for conversational context
+    history_text = format_history_for_llm(thread_id, max_turns=4)
+
+    # 2. Persist the incoming user message to memory (MongoDB / cache)
+    save_message(
+        thread_id=thread_id,
+        role="user",
+        content=question,
+        metadata=metadata or {"channel": "slack"}
+    )
+
     config = {
         "configurable": {"thread_id": thread_id},
         "callbacks": callbacks,
         "metadata": {
             "session_id": thread_id,
-            "user_id": "slack_user",
+            "user_id": (metadata or {}).get("user_id", "slack_user"),
         }
     }
 
-    initial_state = {"question": question}
+    initial_state = {
+        "question": question,
+        "thread_id": thread_id,
+        "chat_history": history_text
+    }
     final_output = agent_app.invoke(initial_state, config=config)
+    answer = final_output.get("answer", "")
+    intent = final_output.get("intent", "")
 
     if callbacks and hasattr(callbacks[0], "last_trace_id"):
         trace_id = callbacks[0].last_trace_id or ""
 
+    # 3. Persist the generated assistant reply to memory
+    save_message(
+        thread_id=thread_id,
+        role="assistant",
+        content=answer,
+        metadata={"intent": intent, "trace_id": trace_id}
+    )
+
     return {
-        "answer": final_output.get("answer", ""),
-        "intent": final_output.get("intent", ""),
+        "answer": answer,
+        "intent": intent,
         "trace_id": trace_id
     }
 

@@ -85,11 +85,7 @@ def ensure_collection(recreate: bool = False):
 # ================================================================
 # DOCUMENT PARSING
 # ================================================================
-# This section handles reading different file types and converting
-# them into clean text + structured elements (tables, headings).
-# We use pdfplumber instead of pypdf because pdfplumber understands
-# the LAYOUT of a PDF — it can detect tables and read columns in
-# the correct order. pypdf just dumps raw text and destroys structure.
+
 
 
 def _looks_like_section_heading(text: str) -> bool:
