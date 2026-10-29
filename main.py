@@ -27,22 +27,24 @@ BANNER = """
 
 def start_slack_bot():
     """Starts Drona in Slack Socket Mode."""
-    print(BANNER)
-    print("[Mode: Slack Socket Mode]")
+    print(BANNER, flush=True)
+    print("[Mode: Slack Socket Mode]", flush=True)
     
     bot_token = os.getenv("SLACK_BOT_TOKEN")
     app_token = os.getenv("SLACK_APP_TOKEN")
     
     if not bot_token or not app_token:
-        print("❌ Error: Missing SLACK_BOT_TOKEN or SLACK_APP_TOKEN in .env.")
-        print("Tip: Run in terminal test mode using: python main.py --cli")
+        print("❌ Error: Missing SLACK_BOT_TOKEN or SLACK_APP_TOKEN in .env.", flush=True)
+        print("Tip: Run in terminal test mode using: venv\\Scripts\\python main.py --cli", flush=True)
         sys.exit(1)
 
+    print("[Drona] Initializing models, vector search, and Slack Socket Mode...", flush=True)
     from slack_bolt.adapter.socket_mode import SocketModeHandler
     from src.slack_app import app
 
-    print("[Slack] Connecting to Slack via Socket Mode...")
-    print("Drona is online! Mention @Drona in your Slack channels.")
+    print("[Slack] Connecting to Slack via Socket Mode...", flush=True)
+    print("⚡ Drona is online and listening! Mention @Drona in your Slack channels.", flush=True)
+    print("Press Ctrl+C to stop the bot.\n", flush=True)
     handler = SocketModeHandler(app, app_token)
     handler.start()
 

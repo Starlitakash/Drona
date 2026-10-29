@@ -202,13 +202,23 @@ def router_node(state: AgentState) -> Dict[str, Any]:
 # ----------------------------------------------------
 
 def direct_chat_node(state: AgentState) -> Dict[str, Any]:
-    """Generates a warm, professional greeting as Drona."""
+    """Generates a warm, professional, and context-aware conversational response as Drona."""
     question = state.get("question", "")
-    prompt = f"""You are 'Drona', the friendly and professional AI Workplace Assistant for NexaTech Solutions.
-A team member just said: "{question}".
-Give a polite, warm response (2-3 sentences max).
-Mention that you can answer questions about NexaTech company policies, technical runbooks, HR benefits, or create and check Jira tickets."""
-    response = llm.invoke([HumanMessage(content=prompt)])
+    history_text = state.get("chat_history", "").strip()
+    history_block = f"Recent Conversation History:\n{history_text}\n\n" if history_text else ""
+
+    prompt = f"""You are 'Drona', the friendly and professional AI Workplace Assistant.
+{history_block}Current User Message: "{question}"
+
+Instructions:
+1. If the user is telling you their name, role, or personal details, acknowledge it warmly and remember it for this conversation!
+2. If the user asks about something mentioned earlier in the conversation (such as "What is my name?", "Who am I?", or a follow-up), check the Recent Conversation History above and answer accurately!
+3. If this is a general greeting or casual chat, give a polite, warm response (2-3 sentences max) and let them know you're ready to help with company policies, procedures, or Jira tickets."""
+
+    response = llm.invoke([
+        SystemMessage(content="You are Drona, an intelligent enterprise assistant with conversational memory."),
+        HumanMessage(content=prompt)
+    ])
     return {"answer": response.content.strip()}
 
 

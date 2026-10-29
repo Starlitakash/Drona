@@ -60,6 +60,8 @@ def handle_app_mention(event, say, client):
     """Handles messages where @Drona is explicitly mentioned."""
     channel_id = event["channel"]
     thread_ts = event.get("thread_ts") or event["ts"]
+    is_dm = channel_id.startswith("D") or event.get("channel_type") == "im"
+    conversation_id = f"dm_{channel_id}" if is_dm else thread_ts
 
     # Clean the prompt
     raw_text = event.get("text", "")
@@ -82,7 +84,7 @@ def handle_app_mention(event, say, client):
     }
 
     # Call LangGraph Agent (returns answer + Langfuse trace_id)
-    result = ask_agent(clean_question, thread_id=thread_ts, metadata=metadata)
+    result = ask_agent(clean_question, thread_id=conversation_id, metadata=metadata)
     answer = result["answer"]
     trace_id = result.get("trace_id", "")
 
@@ -97,7 +99,7 @@ def handle_app_mention(event, say, client):
 @app.event("message")
 def handle_thread_reply(event, say, client):
     """
-    Enables natural back-and-forth conversation inside an active thread.
+    Enables natural back-and-forth conversation inside an active thread or DM.
     Users do NOT need to re-type @Drona on follow-up questions in the same thread.
     """
     # 1. Ignore bot messages (including Drona's own replies) to prevent infinite loops
@@ -108,23 +110,35 @@ def handle_thread_reply(event, say, client):
     if not raw_text:
         return
 
-    # 2. If the user explicitly typed an @mention, handle_app_mention already handles it
+    # 2. If the user explicitly typed an @mention, handle_app_mention handles it
     if re.search(r"<@.*?>", raw_text):
         return
 
-    channel_id = event.get("channel")
+    channel_id = event.get("channel", "")
     thread_ts = event.get("thread_ts")
-    channel_type = event.get("channel_type")
-    is_dm = channel_type == "im"
+    is_dm = channel_id.startswith("D") or event.get("channel_type") == "im"
 
     # 3. Only respond if this message is inside a thread OR a 1-on-1 Direct Message
     if not thread_ts and not is_dm:
         return
 
     effective_thread_ts = thread_ts or event["ts"]
+    conversation_id = f"dm_{channel_id}" if is_dm else effective_thread_ts
 
     # 4. Check if Drona has participated in this thread before (or if it's a DM)
-    if is_dm or is_known_thread(effective_thread_ts):
+    is_active = is_dm or is_known_thread(effective_thread_ts)
+    if not is_active and thread_ts:
+        # Check Slack thread history directly to see if Drona previously replied
+        try:
+            replies = client.conversations_replies(channel=channel_id, ts=thread_ts, limit=5)
+            for msg in replies.get("messages", []):
+                if msg.get("bot_id"):
+                    is_active = True
+                    break
+        except Exception:
+            pass
+
+    if is_active:
         try:
             client.reactions_add(channel=channel_id, name="eyes", timestamp=event["ts"])
         except Exception:
@@ -136,7 +150,7 @@ def handle_thread_reply(event, say, client):
             "team_id": event.get("team")
         }
 
-        result = ask_agent(raw_text, thread_id=effective_thread_ts, metadata=metadata)
+        result = ask_agent(raw_text, thread_id=conversation_id, metadata=metadata)
         answer = result["answer"]
         trace_id = result.get("trace_id", "")
 
