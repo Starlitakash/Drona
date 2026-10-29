@@ -19,13 +19,20 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Pre-download SentenceTransformer and CrossEncoder models into Docker image
-# to ensure zero latency on initial container startup
+# Pre-download SentenceTransformer and CrossEncoder models into the image.
+# This means containers start instantly — models are already on disk.
+# Wrapped in try/except: if HuggingFace is slow or rate-limits the
+# GitHub Actions runner during docker build, we skip gracefully and
+# let the models download at first container startup instead.
 RUN python -c "\
-from sentence_transformers import SentenceTransformer, CrossEncoder; \
-SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2'); \
-CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2'); \
-print('Models pre-downloaded successfully.')"
+try: \n\
+    from sentence_transformers import SentenceTransformer, CrossEncoder; \n\
+    SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2'); \n\
+    CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2'); \n\
+    print('Models pre-downloaded successfully.') \n\
+except Exception as e: \n\
+    print(f'Model pre-download skipped (will download at runtime): {e}') \n\
+"
 
 # Copy application source code, docs, and evals
 COPY src/ ./src/

@@ -58,6 +58,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: false
+          load: true          # Load image into local Docker daemon so the next step can docker run it
           tags: drona:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
