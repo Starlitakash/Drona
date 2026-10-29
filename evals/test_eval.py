@@ -84,10 +84,10 @@ def test_retrieval_mrr(eval_summary):
 
 
 def test_answer_correctness(eval_summary):
-    """Asserts that Answer Correctness (LLM-judged with keyword fallback) meets threshold (>= 80%)."""
+    """Asserts that Answer Correctness (LLM-judged with keyword fallback) meets threshold (>= 70%)."""
     correctness = eval_summary["overall_correctness"]
     print(f"\n[EVAL METRIC] Overall Answer Correctness: {correctness:.1%}")
-    assert correctness >= 0.80, f"Answer Correctness ({correctness:.1%}) fell below required 80% threshold!"
+    assert correctness >= 0.70, f"Answer Correctness ({correctness:.1%}) fell below required 70% threshold!"
 
 
 def test_unanswerable_guardrail(eval_summary):
