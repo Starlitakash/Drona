@@ -565,10 +565,16 @@ def ingest_all_documents(docs_dir: str = "docs", recreate: bool = True) -> Dict[
         client.upsert(collection_name=COLLECTION_NAME, points=batch)
         print(f"  Uploaded batch {i // UPLOAD_BATCH_SIZE + 1}/{-(-total_chunks // UPLOAD_BATCH_SIZE)}")
 
-    # ── Invalidate the in-memory BM25 cache ─────────────────────────────
+    # ── Invalidate the in-memory BM25 cache & Semantic Cache ───────────
     # BM25 is rebuilt lazily on the next query, using the fresh Qdrant data.
     _bm25_index   = None
     _corpus_chunks = []
+    try:
+        from src.semantic_cache import semantic_cache
+        semantic_cache.clear()
+        print("[Semantic Cache] Invalidate cache on re-ingestion to ensure fresh answers.")
+    except Exception as e:
+        print(f"[Semantic Cache Warning] Could not clear cache on ingestion: {e}")
 
     # ── Summary ──────────────────────────────────────────────────────────
     table_total = sum(1 for p in all_payloads if p.get("element_type") == "table")
@@ -701,16 +707,16 @@ def search_dense_vectors(query: str, limit: int = 20) -> List[Dict[str, Any]]:
 
 def hybrid_search_and_rerank(
     query: str,
-    top_candidates: int = 20,
+    top_candidates: int = 10,
     top_final: int = 5,
     log_scores: bool = True
 ) -> List[Dict[str, Any]]:
     """
     Phase 2 Pipeline:
-    1. Retrieve top 20 via Qdrant dense vector search.
-    2. Retrieve top 20 via BM25 keyword search.
+    1. Retrieve candidates via Qdrant dense vector search.
+    2. Retrieve candidates via BM25 keyword search.
     3. Fuse candidates using Reciprocal Rank Fusion (RRF).
-    4. Rerank top 20 candidates down to top 5 with Cross-Encoder (ms-marco-MiniLM-L-6-v2).
+    4. Rerank top 10 candidates down to top 5 with Cross-Encoder (ms-marco-MiniLM-L-6-v2).
     5. Log all retrieval & rerank scores.
     """
     if not query.strip():
