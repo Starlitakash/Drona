@@ -44,6 +44,12 @@ llm = ChatGroq(
 RERANK_THRESHOLD = float(os.getenv("RERANK_THRESHOLD", "-2.5"))
 
 
+from contextvars import ContextVar
+
+# Thread-safe context var for streaming callback
+_STREAM_CALLBACK: ContextVar[Optional[Any]] = ContextVar("_STREAM_CALLBACK", default=None)
+
+
 class AgentState(TypedDict, total=False):
     question: str
     thread_id: Optional[str]
@@ -206,6 +212,7 @@ def direct_chat_node(state: AgentState) -> Dict[str, Any]:
     question = state.get("question", "")
     history_text = state.get("chat_history", "").strip()
     history_block = f"Recent Conversation History:\n{history_text}\n\n" if history_text else ""
+    on_chunk = _STREAM_CALLBACK.get()
 
     prompt = f"""You are 'Drona', the friendly and professional AI Workplace Assistant.
 {history_block}Current User Message: "{question}"
@@ -213,12 +220,23 @@ def direct_chat_node(state: AgentState) -> Dict[str, Any]:
 Instructions:
 1. If the user is telling you their name, role, or personal details, acknowledge it warmly and remember it for this conversation!
 2. If the user asks about something mentioned earlier in the conversation (such as "What is my name?", "Who am I?", or a follow-up), check the Recent Conversation History above and answer accurately!
-3. If this is a general greeting or casual chat, give a polite, warm response (2-3 sentences max) and let them know you're ready to help with company policies, procedures, or Jira tickets."""
+3. If this is a general greeting or casual chat, give a polite, warm response (2-3 sentences max) and let them know you're ready to help with company policies, procedures, or Jira tickets.
+4. Structure any list items cleanly with bullets or numbers."""
 
-    response = llm.invoke([
+    messages = [
         SystemMessage(content="You are Drona, an intelligent enterprise assistant with conversational memory."),
         HumanMessage(content=prompt)
-    ])
+    ]
+
+    if callable(on_chunk):
+        full_text = ""
+        for chunk in llm.stream(messages):
+            token = chunk.content or ""
+            full_text += token
+            on_chunk(token)
+        return {"answer": full_text.strip()}
+
+    response = llm.invoke(messages)
     return {"answer": response.content.strip()}
 
 
@@ -420,23 +438,37 @@ Strict Guidelines:
 1. Ground your answer completely in the provided context. If the answer is not explicitly found in the context, state:
    "I don't have enough information on that in our company records."
 2. Never hallucinate facts, numbers, dates, approval hierarchies, or monetary limits.
-3. Keep the tone professional, helpful, and concise. Use bullet points or markdown tables when explaining limits, approval workflows, or step-by-step procedures.
+3. Structure your response cleanly using structured formatting:
+   - Use bold headers or concise key-takeaway openers.
+   - Use numbered lists (1., 2., 3.) when explaining sequential steps, processes, or workflows.
+   - Use bullet points (•) when enumerating policies, benefits, requirements, or exceptions.
+   - Avoid dense unformatted paragraphs.
 4. At the end of your response, ALWAYS include a '📚 **Sources Cited:**' section citing the exact document filenames AND their section headers (e.g. '- document_name.md (Section: X)')."""
 
     history_text = state.get("chat_history", "").strip()
     history_block = f"Recent Thread Conversation History:\n{history_text}\n\n" if history_text else ""
+    on_chunk = _STREAM_CALLBACK.get()
 
     user_prompt = f"""{history_block}Context from Knowledge Base:
 {context_text}
 
 User Question: {question}"""
 
-    response = llm.invoke([
+    messages = [
         SystemMessage(content=system_prompt),
         HumanMessage(content=user_prompt)
-    ])
+    ]
 
-    answer = response.content.strip()
+    if callable(on_chunk):
+        full_text = ""
+        for chunk in llm.stream(messages):
+            token = chunk.content or ""
+            full_text += token
+            on_chunk(token)
+        answer = full_text.strip()
+    else:
+        response = llm.invoke(messages)
+        answer = response.content.strip()
 
     # Ensure standardized section header citations if LLM truncated them
     if "📚" not in answer and "Sources Cited" not in answer:
@@ -444,7 +476,10 @@ User Question: {question}"""
         for src, secs in citations_dict.items():
             sec_formatted = ", ".join(secs)
             citations_lines.append(f"- *{src}* (Section: {sec_formatted})")
-        answer += "\n\n📚 **Sources Cited:**\n" + "\n".join(citations_lines)
+        citations_suffix = "\n\n📚 **Sources Cited:**\n" + "\n".join(citations_lines)
+        if callable(on_chunk):
+            on_chunk(citations_suffix)
+        answer += citations_suffix
 
     return {"answer": answer}
 
@@ -521,7 +556,8 @@ agent_app = workflow.compile(checkpointer=memory)
 def ask_agent(
     question: str,
     thread_id: str = "default_thread",
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = None,
+    on_chunk: Optional[Any] = None
 ) -> Dict[str, Any]:
     """Runs LangGraph agent pipeline, manages thread memory, and captures Langfuse tracing."""
     callbacks = []
@@ -554,12 +590,16 @@ def ask_agent(
         }
     }
 
-    initial_state = {
-        "question": question,
-        "thread_id": thread_id,
-        "chat_history": history_text
-    }
-    final_output = agent_app.invoke(initial_state, config=config)
+    token = _STREAM_CALLBACK.set(on_chunk)
+    try:
+        initial_state = {
+            "question": question,
+            "thread_id": thread_id,
+            "chat_history": history_text
+        }
+        final_output = agent_app.invoke(initial_state, config=config)
+    finally:
+        _STREAM_CALLBACK.reset(token)
     answer = final_output.get("answer", "")
     intent = final_output.get("intent", "")
 

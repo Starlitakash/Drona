@@ -55,6 +55,60 @@ def build_feedback_blocks(answer_text: str, trace_id: str):
     ]
 
 
+import time
+
+
+def execute_agent_with_streaming(client, channel_id: str, thread_ts: str, prompt: str, conversation_id: str, metadata: dict):
+    """
+    Posts an initial placeholder message in the Slack thread and periodically streams
+    the LLM generation tokens to Slack via chat_update, keeping responses fast and interactive.
+    """
+    # 1. Post initial 'thinking' message
+    init_res = client.chat_postMessage(
+        channel=channel_id,
+        thread_ts=thread_ts,
+        text="*Drona is thinking...* ✍️"
+    )
+    msg_ts = init_res["ts"]
+
+    streamed_text = {"content": ""}
+    last_update = {"time": time.time(), "len": 0}
+
+    def on_llm_chunk(chunk: str):
+        streamed_text["content"] += chunk
+        now = time.time()
+        # Throttled update to avoid hitting Slack's 1 req/sec rate limit
+        # Updates if 0.8 seconds passed and at least 25 new characters are buffered
+        if (now - last_update["time"] >= 0.8) and (len(streamed_text["content"]) - last_update["len"] >= 25):
+            current_draft = streamed_text["content"] + "\n\n_...typing..._"
+            try:
+                client.chat_update(
+                    channel=channel_id,
+                    ts=msg_ts,
+                    text=current_draft
+                )
+                last_update["time"] = now
+                last_update["len"] = len(streamed_text["content"])
+            except Exception:
+                pass
+
+    # 2. Invoke the agent with on_chunk callback
+    result = ask_agent(prompt, thread_id=conversation_id, metadata=metadata, on_chunk=on_llm_chunk)
+    final_answer = result.get("answer") or streamed_text["content"] or "No response generated."
+    trace_id = result.get("trace_id", "")
+
+    # 3. Final update with the complete structured markdown and interactive feedback buttons
+    try:
+        client.chat_update(
+            channel=channel_id,
+            ts=msg_ts,
+            blocks=build_feedback_blocks(final_answer, trace_id),
+            text=final_answer
+        )
+    except Exception as e:
+        print(f"[Slack Update Error]: {e}")
+
+
 @app.event("app_mention")
 def handle_app_mention(event, say, client):
     """Handles messages where @Drona is explicitly mentioned."""
@@ -83,16 +137,14 @@ def handle_app_mention(event, say, client):
         "team_id": event.get("team")
     }
 
-    # Call LangGraph Agent (returns answer + Langfuse trace_id)
-    result = ask_agent(clean_question, thread_id=conversation_id, metadata=metadata)
-    answer = result["answer"]
-    trace_id = result.get("trace_id", "")
-
-    # Reply in Slack with the buttons attached to this specific trace
-    say(
-        blocks=build_feedback_blocks(answer, trace_id),
-        text=answer,
-        thread_ts=thread_ts
+    # Stream agent generation in the Slack thread
+    execute_agent_with_streaming(
+        client=client,
+        channel_id=channel_id,
+        thread_ts=thread_ts,
+        prompt=clean_question,
+        conversation_id=conversation_id,
+        metadata=metadata
     )
 
 
@@ -150,14 +202,14 @@ def handle_thread_reply(event, say, client):
             "team_id": event.get("team")
         }
 
-        result = ask_agent(raw_text, thread_id=conversation_id, metadata=metadata)
-        answer = result["answer"]
-        trace_id = result.get("trace_id", "")
-
-        say(
-            blocks=build_feedback_blocks(answer, trace_id),
-            text=answer,
-            thread_ts=effective_thread_ts
+        # Stream agent generation in the Slack thread
+        execute_agent_with_streaming(
+            client=client,
+            channel_id=channel_id,
+            thread_ts=effective_thread_ts,
+            prompt=raw_text,
+            conversation_id=conversation_id,
+            metadata=metadata
         )
 
 
