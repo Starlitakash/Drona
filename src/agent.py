@@ -421,6 +421,13 @@ def rag_retrieve_node(state: AgentState) -> Dict[str, Any]:
             "cache_hit": False
         }
 
+    # Dynamic Context Pruning based on Cross-Encoder Reranker Confidence:
+    # If the top chunk has high confidence (rerank_score >= 1.5), pass only top 2 chunks
+    # instead of 5 to cut prompt tokens by >60% and improve generation speed.
+    if len(docs) > 2 and top_score >= 1.5:
+        print(f"[Dynamic Pruning] Top score {top_score:+.2f} >= 1.5 (High Confidence). Pruned context from {len(docs)} chunks down to 2 chunks to save tokens.")
+        docs = docs[:2]
+
     return {
         "documents": docs,
         "guardrail_triggered": False,
