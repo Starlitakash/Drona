@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.retriever import search_knowledge_base
 from src.jira_tool import create_jira_ticket, get_jira_ticket, update_jira_ticket
 from src.memory import save_message, format_history_for_llm, get_chat_history
+from src.semantic_cache import semantic_cache
 
 load_dotenv()
 
@@ -65,6 +66,8 @@ class AgentState(TypedDict, total=False):
     ticket_comment: Optional[str]
     clarifying_question: Optional[str]
     guardrail_triggered: Optional[bool]
+    cache_hit: Optional[bool]
+    cache_matched_query: Optional[str]
 
 
 def extract_section_header(chunk_text: str, default: str = "General Provisions") -> str:
@@ -383,8 +386,25 @@ def jira_update_node(state: AgentState) -> Dict[str, Any]:
 
 
 def rag_retrieve_node(state: AgentState) -> Dict[str, Any]:
-    """Retrieves top relevant chunks and applies the rerank score threshold guardrail."""
+    """Checks semantic cache first, then retrieves top relevant chunks if cache miss."""
     question = state.get("question", "")
+
+    # 1. Check Semantic Cache (Cosine similarity match for repeated / paraphrased questions)
+    cached = semantic_cache.get(question)
+    if cached:
+        cached_answer = cached["answer"]
+        on_chunk = _STREAM_CALLBACK.get()
+        if callable(on_chunk):
+            on_chunk(cached_answer)
+        return {
+            "answer": cached_answer,
+            "documents": [],
+            "guardrail_triggered": False,
+            "cache_hit": True,
+            "cache_matched_query": cached.get("matched_query")
+        }
+
+    # 2. Cache Miss: Execute Hybrid Retrieval (Dense Vector + BM25)
     docs = search_knowledge_base(question, limit=5)
 
     # Attach section header to each retrieved doc
@@ -397,17 +417,23 @@ def rag_retrieve_node(state: AgentState) -> Dict[str, Any]:
         print(f"[Guardrail Check] Top score {top_score:+.4f} < threshold {RERANK_THRESHOLD}. Triggering anti-hallucination guardrail.")
         return {
             "documents": [],
-            "guardrail_triggered": True
+            "guardrail_triggered": True,
+            "cache_hit": False
         }
 
     return {
         "documents": docs,
-        "guardrail_triggered": False
+        "guardrail_triggered": False,
+        "cache_hit": False
     }
 
 
 def rag_generate_node(state: AgentState) -> Dict[str, Any]:
     """Generates grounded answer strictly citing source documents and section headers."""
+    # Fast exit on semantic cache hit
+    if state.get("cache_hit"):
+        return {"answer": state.get("answer", "")}
+
     if state.get("guardrail_triggered"):
         return {"answer": "I don't have enough information on that in our company records."}
 
@@ -480,6 +506,10 @@ User Question: {question}"""
         if callable(on_chunk):
             on_chunk(citations_suffix)
         answer += citations_suffix
+
+    # Cache valid enterprise answers in the Semantic Cache
+    if not state.get("guardrail_triggered") and "I don't have enough information" not in answer:
+        semantic_cache.set(question, answer, intent="RAG")
 
     return {"answer": answer}
 
@@ -581,6 +611,32 @@ def ask_agent(
         metadata=metadata or {"channel": "slack"}
     )
 
+    # Fast Pre-Execution Semantic Cache Check (Bypasses Router, Retriever, and LLM)
+    q_lower = question.lower().strip()
+    is_special_action = (
+        any(w in q_lower for w in ["confirm", "cancel", "jira", "create ticket", "update ticket"])
+        or len(q_lower.split()) < 3
+    )
+
+    if not is_special_action:
+        cached = semantic_cache.get(question)
+        if cached:
+            cached_answer = cached["answer"]
+            if callable(on_chunk):
+                on_chunk(cached_answer)
+            save_message(
+                thread_id=thread_id,
+                role="assistant",
+                content=cached_answer,
+                metadata={"intent": "RAG", "cache_hit": True, "trace_id": ""}
+            )
+            return {
+                "answer": cached_answer,
+                "intent": "RAG",
+                "trace_id": "",
+                "cache_hit": True
+            }
+
     config = {
         "configurable": {"thread_id": thread_id},
         "callbacks": callbacks,
@@ -602,6 +658,7 @@ def ask_agent(
         _STREAM_CALLBACK.reset(token)
     answer = final_output.get("answer", "")
     intent = final_output.get("intent", "")
+    cache_hit = final_output.get("cache_hit", False)
 
     if callbacks and hasattr(callbacks[0], "last_trace_id"):
         trace_id = callbacks[0].last_trace_id or ""
@@ -611,13 +668,14 @@ def ask_agent(
         thread_id=thread_id,
         role="assistant",
         content=answer,
-        metadata={"intent": intent, "trace_id": trace_id}
+        metadata={"intent": intent, "trace_id": trace_id, "cache_hit": cache_hit}
     )
 
     return {
         "answer": answer,
         "intent": intent,
-        "trace_id": trace_id
+        "trace_id": trace_id,
+        "cache_hit": cache_hit
     }
 
 

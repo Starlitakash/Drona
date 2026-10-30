@@ -16,6 +16,7 @@ __pycache__/
 
 # Local database / vector data
 qdrant_data/
+data/
 *.db
 *.sqlite
 
