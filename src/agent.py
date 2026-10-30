@@ -463,13 +463,13 @@ Answer the user's question accurately, professionally, and directly using ONLY t
 Response Structure & Styling Rules:
 1. Grounding: Rely strictly on the provided context. If the answer is not explicitly found in the context, state:
    "I don't have enough information on that in our company records."
-2. Formatting Layout (Clean and Professional):
-   • Title / Heading: Start with a clear bold title on line 1 (e.g. *Americans with Disabilities Act (ADA) Overview*).
+2. Formatting Layout (Clean, Professional, ZERO ASTERISKS):
+   • Title / Heading: Start with a clear plain-text title on line 1 (e.g. Americans with Disabilities Act (ADA) Overview).
    • Overview Paragraph: Follow with a clear, readable 1-2 sentence paragraph answering the core question in plain English.
-   • Key Points / Details: Add a clean section with bullet points (•) or numbered steps (1., 2., 3.) covering important requirements, conditions, and exceptions. Bold ONLY the lead category (e.g. "• *Scope:* ..."), and DO NOT clutter sentences with extra asterisks.
-   • Avoid ugly asterisk clutter: Never bold random words inside a sentence. Keep formatting elegant and readable.
+   • Key Points / Details: Add a clean section with bullet points (•) or numbered steps (1., 2., 3.) covering important requirements, conditions, and exceptions. Use clean prefixes (e.g. "• Scope: ...", "• Definition: ...").
+   • ZERO ASTERISKS: Do NOT use any asterisks (*) or stars anywhere in your response. No **bold** and no *italics*. Keep the text completely clean without any star characters.
 3. Citations: At the end, always include a clean source section:
-   📚 *Sources Cited:*
+   📚 Sources Cited:
    - Document-Name.pdf (Section: Section Name)"""
 
     history_text = state.get("chat_history", "").strip()
@@ -490,23 +490,27 @@ User Question: {question}"""
         full_text = ""
         for chunk in llm.stream(messages):
             token = chunk.content or ""
+            # Strip asterisks in real-time
+            token = token.replace("*", "")
             full_text += token
             on_chunk(token)
         answer = full_text.strip()
     else:
         response = llm.invoke(messages)
-        answer = response.content.strip()
+        answer = response.content.strip().replace("*", "")
 
     # Ensure standardized section header citations if LLM truncated them
     if "📚" not in answer and "Sources Cited" not in answer:
         citations_lines = []
         for src, secs in citations_dict.items():
             sec_formatted = ", ".join(secs)
-            citations_lines.append(f"- *{src}* (Section: {sec_formatted})")
-        citations_suffix = "\n\n📚 **Sources Cited:**\n" + "\n".join(citations_lines)
+            citations_lines.append(f"- {src} (Section: {sec_formatted})")
+        citations_suffix = "\n\n📚 Sources Cited:\n" + "\n".join(citations_lines)
         if callable(on_chunk):
             on_chunk(citations_suffix)
         answer += citations_suffix
+    else:
+        answer = answer.replace("*", "")
 
     # Cache valid enterprise answers in the Semantic Cache
     if not state.get("guardrail_triggered") and "I don't have enough information" not in answer:

@@ -59,13 +59,11 @@ import time
 
 
 def format_slack_mrkdwn(text: str) -> str:
-    """Converts standard Markdown **bold** to Slack mrkdwn *bold* and cleans up asterisk clutter."""
-    # Convert **bold** to *bold* for clean native Slack rendering
-    cleaned = re.sub(r"\*\*(.*?)\*\*", r"*\1*", text)
-    # Remove any stray triple/quad asterisks
-    cleaned = re.sub(r"\*{3,}", "*", cleaned)
-    # Clean up empty bold spaces
-    cleaned = re.sub(r"\*\s+\*", "", cleaned)
+    """Removes all asterisk marks and ensures clean, executive-level readability without stars."""
+    # Completely remove all asterisks (no stars)
+    cleaned = text.replace("*", "")
+    # Clean up double/multiple spaces left behind
+    cleaned = re.sub(r"[ \t]+", " ", cleaned)
     return cleaned.strip()
 
 
