@@ -68,6 +68,7 @@ class AgentState(TypedDict, total=False):
     guardrail_triggered: Optional[bool]
     cache_hit: Optional[bool]
     cache_matched_query: Optional[str]
+    start_time: Optional[float]
 
 
 def extract_section_header(chunk_text: str, default: str = "General Provisions") -> str:
@@ -507,9 +508,23 @@ User Question: {question}"""
             on_chunk(citations_suffix)
         answer += citations_suffix
 
-    # Cache valid enterprise answers in the Semantic Cache
+    # Cache valid enterprise answers in the Semantic Cache with actual latency and token metrics
     if not state.get("guardrail_triggered") and "I don't have enough information" not in answer:
-        semantic_cache.set(question, answer, intent="RAG")
+        start_t = state.get("start_time")
+        orig_latency = round(time.time() - start_t, 2) if start_t else 0.0
+        est_input_tokens = len(context_text) // 4
+        est_output_tokens = len(answer) // 4
+        semantic_cache.set(
+            query=question,
+            answer=answer,
+            intent="RAG",
+            metadata={
+                "original_latency_sec": orig_latency,
+                "input_tokens_estimate": est_input_tokens,
+                "output_tokens_estimate": est_output_tokens,
+                "total_tokens_estimate": est_input_tokens + est_output_tokens
+            }
+        )
 
     return {"answer": answer}
 
@@ -600,6 +615,8 @@ def ask_agent(
         except Exception as e:
             print(f"[Langfuse Warning]: {e}")
 
+    start_time = time.time()
+
     # 1. Retrieve recent thread dialogue turns for conversational context
     history_text = format_history_for_llm(thread_id, max_turns=4)
 
@@ -625,6 +642,11 @@ def ask_agent(
             if callable(on_chunk):
                 on_chunk(cached_answer)
 
+            lookup_ms = round((time.time() - start_time) * 1000, 1)
+            meta = cached.get("metadata", {})
+            orig_latency_sec = meta.get("original_latency_sec", 0.0)
+            tokens_saved = meta.get("total_tokens_estimate", 0)
+
             trace_id = ""
             if os.getenv("LANGFUSE_PUBLIC_KEY"):
                 try:
@@ -641,8 +663,9 @@ def ask_agent(
                             "cache_hit": True,
                             "matched_query": cached.get("matched_query"),
                             "similarity": cached.get("similarity"),
-                            "tokens_saved": 1800,
-                            "latency_saved": "4.8s"
+                            "lookup_latency_ms": lookup_ms,
+                            "original_latency_sec": orig_latency_sec,
+                            "tokens_saved": tokens_saved
                         }
                     )
                     lf.flush()
@@ -676,7 +699,8 @@ def ask_agent(
         initial_state = {
             "question": question,
             "thread_id": thread_id,
-            "chat_history": history_text
+            "chat_history": history_text,
+            "start_time": start_time
         }
         final_output = agent_app.invoke(initial_state, config=config)
     finally:
