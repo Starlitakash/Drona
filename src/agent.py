@@ -68,7 +68,6 @@ class AgentState(TypedDict, total=False):
     guardrail_triggered: Optional[bool]
     cache_hit: Optional[bool]
     cache_matched_query: Optional[str]
-    start_time: Optional[float]
 
 
 def extract_section_header(chunk_text: str, default: str = "General Provisions") -> str:
@@ -461,16 +460,17 @@ def rag_generate_node(state: AgentState) -> Dict[str, Any]:
     system_prompt = """You are 'Drona', the official enterprise AI Workplace Assistant for NexaTech Solutions.
 Answer the user's question accurately, professionally, and directly using ONLY the provided documentation context.
 
-Strict Guidelines:
-1. Ground your answer completely in the provided context. If the answer is not explicitly found in the context, state:
+Response Structure & Styling Rules:
+1. Grounding: Rely strictly on the provided context. If the answer is not explicitly found in the context, state:
    "I don't have enough information on that in our company records."
-2. Never hallucinate facts, numbers, dates, approval hierarchies, or monetary limits.
-3. Structure your response cleanly using structured formatting:
-   - Use bold headers or concise key-takeaway openers.
-   - Use numbered lists (1., 2., 3.) when explaining sequential steps, processes, or workflows.
-   - Use bullet points (•) when enumerating policies, benefits, requirements, or exceptions.
-   - Avoid dense unformatted paragraphs.
-4. At the end of your response, ALWAYS include a '📚 **Sources Cited:**' section citing the exact document filenames AND their section headers (e.g. '- document_name.md (Section: X)')."""
+2. Formatting Layout (Clean and Professional):
+   • Title / Heading: Start with a clear bold title on line 1 (e.g. *Americans with Disabilities Act (ADA) Overview*).
+   • Overview Paragraph: Follow with a clear, readable 1-2 sentence paragraph answering the core question in plain English.
+   • Key Points / Details: Add a clean section with bullet points (•) or numbered steps (1., 2., 3.) covering important requirements, conditions, and exceptions. Bold ONLY the lead category (e.g. "• *Scope:* ..."), and DO NOT clutter sentences with extra asterisks.
+   • Avoid ugly asterisk clutter: Never bold random words inside a sentence. Keep formatting elegant and readable.
+3. Citations: At the end, always include a clean source section:
+   📚 *Sources Cited:*
+   - Document-Name.pdf (Section: Section Name)"""
 
     history_text = state.get("chat_history", "").strip()
     history_block = f"Recent Thread Conversation History:\n{history_text}\n\n" if history_text else ""
@@ -508,23 +508,9 @@ User Question: {question}"""
             on_chunk(citations_suffix)
         answer += citations_suffix
 
-    # Cache valid enterprise answers in the Semantic Cache with actual latency and token metrics
+    # Cache valid enterprise answers in the Semantic Cache
     if not state.get("guardrail_triggered") and "I don't have enough information" not in answer:
-        start_t = state.get("start_time")
-        orig_latency = round(time.time() - start_t, 2) if start_t else 0.0
-        est_input_tokens = len(context_text) // 4
-        est_output_tokens = len(answer) // 4
-        semantic_cache.set(
-            query=question,
-            answer=answer,
-            intent="RAG",
-            metadata={
-                "original_latency_sec": orig_latency,
-                "input_tokens_estimate": est_input_tokens,
-                "output_tokens_estimate": est_output_tokens,
-                "total_tokens_estimate": est_input_tokens + est_output_tokens
-            }
-        )
+        semantic_cache.set(question, answer, intent="RAG")
 
     return {"answer": answer}
 
@@ -615,8 +601,6 @@ def ask_agent(
         except Exception as e:
             print(f"[Langfuse Warning]: {e}")
 
-    start_time = time.time()
-
     # 1. Retrieve recent thread dialogue turns for conversational context
     history_text = format_history_for_llm(thread_id, max_turns=4)
 
@@ -641,47 +625,16 @@ def ask_agent(
             cached_answer = cached["answer"]
             if callable(on_chunk):
                 on_chunk(cached_answer)
-
-            lookup_ms = round((time.time() - start_time) * 1000, 1)
-            meta = cached.get("metadata", {})
-            orig_latency_sec = meta.get("original_latency_sec", 0.0)
-            tokens_saved = meta.get("total_tokens_estimate", 0)
-
-            trace_id = ""
-            if os.getenv("LANGFUSE_PUBLIC_KEY"):
-                try:
-                    from langfuse import Langfuse
-                    from langfuse.types import TraceContext
-                    lf = Langfuse()
-                    trace_id = lf.create_trace_id()
-                    lf.create_event(
-                        name="semantic_cache_hit",
-                        trace_context=TraceContext(trace_id=trace_id),
-                        input={"question": question},
-                        output={"answer": cached_answer},
-                        metadata={
-                            "cache_hit": True,
-                            "matched_query": cached.get("matched_query"),
-                            "similarity": cached.get("similarity"),
-                            "lookup_latency_ms": lookup_ms,
-                            "original_latency_sec": orig_latency_sec,
-                            "tokens_saved": tokens_saved
-                        }
-                    )
-                    lf.flush()
-                except Exception:
-                    pass
-
             save_message(
                 thread_id=thread_id,
                 role="assistant",
                 content=cached_answer,
-                metadata={"intent": "RAG", "cache_hit": True, "trace_id": trace_id}
+                metadata={"intent": "RAG", "cache_hit": True, "trace_id": ""}
             )
             return {
                 "answer": cached_answer,
                 "intent": "RAG",
-                "trace_id": trace_id,
+                "trace_id": "",
                 "cache_hit": True
             }
 
@@ -699,8 +652,7 @@ def ask_agent(
         initial_state = {
             "question": question,
             "thread_id": thread_id,
-            "chat_history": history_text,
-            "start_time": start_time
+            "chat_history": history_text
         }
         final_output = agent_app.invoke(initial_state, config=config)
     finally:

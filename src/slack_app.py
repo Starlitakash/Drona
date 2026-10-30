@@ -58,6 +58,17 @@ def build_feedback_blocks(answer_text: str, trace_id: str):
 import time
 
 
+def format_slack_mrkdwn(text: str) -> str:
+    """Converts standard Markdown **bold** to Slack mrkdwn *bold* and cleans up asterisk clutter."""
+    # Convert **bold** to *bold* for clean native Slack rendering
+    cleaned = re.sub(r"\*\*(.*?)\*\*", r"*\1*", text)
+    # Remove any stray triple/quad asterisks
+    cleaned = re.sub(r"\*{3,}", "*", cleaned)
+    # Clean up empty bold spaces
+    cleaned = re.sub(r"\*\s+\*", "", cleaned)
+    return cleaned.strip()
+
+
 def execute_agent_with_streaming(client, channel_id: str, thread_ts: str, prompt: str, conversation_id: str, metadata: dict):
     """
     Posts an initial placeholder message in the Slack thread and periodically streams
@@ -80,7 +91,7 @@ def execute_agent_with_streaming(client, channel_id: str, thread_ts: str, prompt
         # Throttled update to avoid hitting Slack's 1 req/sec rate limit
         # Updates if 0.8 seconds passed and at least 25 new characters are buffered
         if (now - last_update["time"] >= 0.8) and (len(streamed_text["content"]) - last_update["len"] >= 25):
-            current_draft = streamed_text["content"] + "\n\n_...typing..._"
+            current_draft = format_slack_mrkdwn(streamed_text["content"]) + "\n\n_...typing..._"
             try:
                 client.chat_update(
                     channel=channel_id,
@@ -95,6 +106,7 @@ def execute_agent_with_streaming(client, channel_id: str, thread_ts: str, prompt
     # 2. Invoke the agent with on_chunk callback
     result = ask_agent(prompt, thread_id=conversation_id, metadata=metadata, on_chunk=on_llm_chunk)
     final_answer = result.get("answer") or streamed_text["content"] or "No response generated."
+    final_answer = format_slack_mrkdwn(final_answer)
     trace_id = result.get("trace_id", "")
 
     # 3. Final update with the complete structured markdown and interactive feedback buttons
