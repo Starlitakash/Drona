@@ -1,0 +1,829 @@
+{
+  "benchmark_timestamp": "2026-10-31 12:22:03",
+  "total_requests": 100,
+  "distribution": "Zipfian (s=1.15)",
+  "hit_count": 60,
+  "miss_count": 40,
+  "hit_rate_pct": 60.0,
+  "percentiles": {
+    "min_ms": 7.51,
+    "p50_ms": 30.96,
+    "p90_ms": 9608.29,
+    "p95_ms": 13165.78,
+    "p99_ms": 25535.71,
+    "max_ms": 27760.58,
+    "mean_ms": 3310.09
+  },
+  "breakdown": {
+    "cache_hit_p50_ms": 14.78,
+    "cold_rag_p50_ms": 6040.53,
+    "cache_speedup": 408.83
+  },
+  "tokens": {
+    "baseline": 85000,
+    "actual": 34000,
+    "savings_pct": 60.0
+  },
+  "individual_runs": [
+    {
+      "request_id": 1,
+      "query": "What type of employment relationship does TriageLogic establish with employees?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 27760.58,
+      "cache_hit": false,
+      "answer_length": 628
+    },
+    {
+      "request_id": 2,
+      "query": "What progressive discipline steps does management follow for policy violations?",
+      "topic_name": "Disciplinary Procedures",
+      "latency_ms": 5749.67,
+      "cache_hit": false,
+      "answer_length": 637
+    },
+    {
+      "request_id": 3,
+      "query": "What pre-employment screening is conducted on candidates?",
+      "topic_name": "Background Checks Requirements",
+      "latency_ms": 4468.51,
+      "cache_hit": false,
+      "answer_length": 567
+    },
+    {
+      "request_id": 4,
+      "query": "Mandatory paperwork needed for employee personnel file",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 4524.28,
+      "cache_hit": false,
+      "answer_length": 1171
+    },
+    {
+      "request_id": 5,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 5622.86,
+      "cache_hit": false,
+      "answer_length": 444
+    },
+    {
+      "request_id": 6,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 32.91,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 7,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 47.03,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 8,
+      "query": "What is the notice period required for voluntary resignation?",
+      "topic_name": "Termination and Notice Period",
+      "latency_ms": 2485.14,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 9,
+      "query": "What mandatory documents must be maintained in each employee personnel file?",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 44.39,
+      "cache_hit": true,
+      "answer_length": 1171
+    },
+    {
+      "request_id": 10,
+      "query": "What pre-employment screening is conducted on candidates?",
+      "topic_name": "Background Checks Requirements",
+      "latency_ms": 15.58,
+      "cache_hit": true,
+      "answer_length": 567
+    },
+    {
+      "request_id": 11,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 3910.84,
+      "cache_hit": false,
+      "answer_length": 998
+    },
+    {
+      "request_id": 12,
+      "query": "How can an employee file a grievance regarding workplace conflict?",
+      "topic_name": "Grievance and Dispute Resolution",
+      "latency_ms": 1976.19,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 13,
+      "query": "What is the company policy on Equal Employment Opportunity and non-discrimination?",
+      "topic_name": "Equal Employment Opportunity Policy",
+      "latency_ms": 4159.12,
+      "cache_hit": false,
+      "answer_length": 1282
+    },
+    {
+      "request_id": 14,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 25513.24,
+      "cache_hit": false,
+      "answer_length": 453
+    },
+    {
+      "request_id": 15,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 114.7,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 16,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 32.32,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 17,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 51.83,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 18,
+      "query": "What is the schedule for annual performance evaluations?",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 18531.51,
+      "cache_hit": false,
+      "answer_length": 629
+    },
+    {
+      "request_id": 19,
+      "query": "Does the policy manual create an employment contract?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 2877.54,
+      "cache_hit": false,
+      "answer_length": 656
+    },
+    {
+      "request_id": 20,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 25.39,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 21,
+      "query": "What forms must be kept in the personnel file according to Core 25?",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 5363.72,
+      "cache_hit": false,
+      "answer_length": 465
+    },
+    {
+      "request_id": 22,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 5737.29,
+      "cache_hit": false,
+      "answer_length": 654
+    },
+    {
+      "request_id": 23,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 19.65,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 24,
+      "query": "Is employment at TriageLogic at-will or under contract?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 12407.82,
+      "cache_hit": false,
+      "answer_length": 836
+    },
+    {
+      "request_id": 25,
+      "query": "Does the policy manual create an employment contract?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 22.1,
+      "cache_hit": true,
+      "answer_length": 656
+    },
+    {
+      "request_id": 26,
+      "query": "What is the overtime approval policy for hourly staff?",
+      "topic_name": "Overtime and Hours Tracking",
+      "latency_ms": 7818.38,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 27,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 35.87,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 28,
+      "query": "What is the schedule for annual performance evaluations?",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 14.72,
+      "cache_hit": true,
+      "answer_length": 629
+    },
+    {
+      "request_id": 29,
+      "query": "Which documents are required in the staff personnel folder?",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 9190.67,
+      "cache_hit": false,
+      "answer_length": 1107
+    },
+    {
+      "request_id": 30,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 20.48,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 31,
+      "query": "What mandatory documents must be maintained in each employee personnel file?",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 17.57,
+      "cache_hit": true,
+      "answer_length": 1171
+    },
+    {
+      "request_id": 32,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 23.94,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 33,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 17.66,
+      "cache_hit": true,
+      "answer_length": 998
+    },
+    {
+      "request_id": 34,
+      "query": "What progressive discipline steps does management follow for policy violations?",
+      "topic_name": "Disciplinary Procedures",
+      "latency_ms": 29.6,
+      "cache_hit": true,
+      "answer_length": 637
+    },
+    {
+      "request_id": 35,
+      "query": "What business expenses are eligible for reimbursement and what documentation is required?",
+      "topic_name": "Expense Reimbursement",
+      "latency_ms": 11476.16,
+      "cache_hit": false,
+      "answer_length": 1160
+    },
+    {
+      "request_id": 36,
+      "query": "What is the procedure for requesting PTO in advance?",
+      "topic_name": "Paid Time Off Accrual",
+      "latency_ms": 5568.95,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 37,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 39.51,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 38,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 14.83,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 39,
+      "query": "Telecommute eligibility criteria for employees",
+      "topic_name": "Telecommute Eligibility",
+      "latency_ms": 3933.77,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 40,
+      "query": "Does the policy manual create an employment contract?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 15.14,
+      "cache_hit": true,
+      "answer_length": 656
+    },
+    {
+      "request_id": 41,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 18.82,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 42,
+      "query": "Frequency of performance evaluations for staff",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 9790.27,
+      "cache_hit": false,
+      "answer_length": 507
+    },
+    {
+      "request_id": 43,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 20.2,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 44,
+      "query": "Are drugs or alcohol prohibited on company premises?",
+      "topic_name": "Drug and Alcohol Policy",
+      "latency_ms": 16839.26,
+      "cache_hit": false,
+      "answer_length": 800
+    },
+    {
+      "request_id": 45,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 16.21,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 46,
+      "query": "Telecommute eligibility criteria for employees",
+      "topic_name": "Telecommute Eligibility",
+      "latency_ms": 2758.75,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 47,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 9.74,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 48,
+      "query": "How often are employee performance appraisals conducted?",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 6708.86,
+      "cache_hit": false,
+      "answer_length": 700
+    },
+    {
+      "request_id": 49,
+      "query": "How often are employee performance appraisals conducted?",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 12.81,
+      "cache_hit": true,
+      "answer_length": 700
+    },
+    {
+      "request_id": 50,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 17.42,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 51,
+      "query": "How can an employee file a grievance regarding workplace conflict?",
+      "topic_name": "Grievance and Dispute Resolution",
+      "latency_ms": 8250.93,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 52,
+      "query": "How must non-exempt employees track and record their working hours?",
+      "topic_name": "Overtime and Hours Tracking",
+      "latency_ms": 5468.61,
+      "cache_hit": false,
+      "answer_length": 656
+    },
+    {
+      "request_id": 53,
+      "query": "What security measures are required for company laptops and remote devices?",
+      "topic_name": "Equipment and Laptop Security",
+      "latency_ms": 2597.32,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 54,
+      "query": "What training must new employees complete during orientation?",
+      "topic_name": "Orientation and Training Period",
+      "latency_ms": 4023.64,
+      "cache_hit": false,
+      "answer_length": 842
+    },
+    {
+      "request_id": 55,
+      "query": "What forms must be kept in the personnel file according to Core 25?",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 14.1,
+      "cache_hit": true,
+      "answer_length": 465
+    },
+    {
+      "request_id": 56,
+      "query": "Are drugs or alcohol prohibited on company premises?",
+      "topic_name": "Drug and Alcohol Policy",
+      "latency_ms": 12.15,
+      "cache_hit": true,
+      "answer_length": 800
+    },
+    {
+      "request_id": 57,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 9.42,
+      "cache_hit": true,
+      "answer_length": 998
+    },
+    {
+      "request_id": 58,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 7.94,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 59,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 9.44,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 60,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 8.66,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 61,
+      "query": "Can you explain the at-will employment policy?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 5200.26,
+      "cache_hit": false,
+      "answer_length": 872
+    },
+    {
+      "request_id": 62,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 8.35,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 63,
+      "query": "EEO guidelines and non-harassment commitment",
+      "topic_name": "Equal Employment Opportunity Policy",
+      "latency_ms": 8328.81,
+      "cache_hit": false,
+      "answer_length": 1791
+    },
+    {
+      "request_id": 64,
+      "query": "Can you explain the at-will employment policy?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 53.25,
+      "cache_hit": true,
+      "answer_length": 872
+    },
+    {
+      "request_id": 65,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 33.28,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 66,
+      "query": "What is the schedule for annual performance evaluations?",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 20.1,
+      "cache_hit": true,
+      "answer_length": 629
+    },
+    {
+      "request_id": 67,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 18.45,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 68,
+      "query": "How is paid time off accrued and requested by employees?",
+      "topic_name": "Paid Time Off Accrual",
+      "latency_ms": 16973.48,
+      "cache_hit": false,
+      "answer_length": 302
+    },
+    {
+      "request_id": 69,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 8.35,
+      "cache_hit": true,
+      "answer_length": 998
+    },
+    {
+      "request_id": 70,
+      "query": "What is the dress code for client meetings and virtual calls?",
+      "topic_name": "Dress Code and Professional Conduct",
+      "latency_ms": 5227.86,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 71,
+      "query": "What is the overtime approval policy for hourly staff?",
+      "topic_name": "Overtime and Hours Tracking",
+      "latency_ms": 3583.27,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 72,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 14.19,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 73,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 12.12,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 74,
+      "query": "How is paid time off accrued and requested by employees?",
+      "topic_name": "Paid Time Off Accrual",
+      "latency_ms": 6845.63,
+      "cache_hit": false,
+      "answer_length": 528
+    },
+    {
+      "request_id": 75,
+      "query": "What background checks are required for newly hired employees?",
+      "topic_name": "Background Checks Requirements",
+      "latency_ms": 12972.44,
+      "cache_hit": false,
+      "answer_length": 894
+    },
+    {
+      "request_id": 76,
+      "query": "What background checks are required for newly hired employees?",
+      "topic_name": "Background Checks Requirements",
+      "latency_ms": 11.75,
+      "cache_hit": true,
+      "answer_length": 894
+    },
+    {
+      "request_id": 77,
+      "query": "What confidentiality agreements must employees sign?",
+      "topic_name": "HIPAA and Confidentiality Statement",
+      "latency_ms": 12074.33,
+      "cache_hit": false,
+      "answer_length": 811
+    },
+    {
+      "request_id": 78,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 15.58,
+      "cache_hit": true,
+      "answer_length": 998
+    },
+    {
+      "request_id": 79,
+      "query": "Can you explain the at-will employment policy?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 8.53,
+      "cache_hit": true,
+      "answer_length": 872
+    },
+    {
+      "request_id": 80,
+      "query": "How often must the Employee Personnel File Checklist be updated?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 11.66,
+      "cache_hit": true,
+      "answer_length": 453
+    },
+    {
+      "request_id": 81,
+      "query": "What is the notice period required for voluntary resignation?",
+      "topic_name": "Termination and Notice Period",
+      "latency_ms": 6331.4,
+      "cache_hit": false,
+      "answer_length": 63
+    },
+    {
+      "request_id": 82,
+      "query": "Mandatory paperwork needed for employee personnel file",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 8.84,
+      "cache_hit": true,
+      "answer_length": 1171
+    },
+    {
+      "request_id": 83,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 7.8,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 84,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 8.44,
+      "cache_hit": true,
+      "answer_length": 998
+    },
+    {
+      "request_id": 85,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 7.96,
+      "cache_hit": true,
+      "answer_length": 998
+    },
+    {
+      "request_id": 86,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 10.14,
+      "cache_hit": true,
+      "answer_length": 998
+    },
+    {
+      "request_id": 87,
+      "query": "What background checks are required for newly hired employees?",
+      "topic_name": "Background Checks Requirements",
+      "latency_ms": 11.14,
+      "cache_hit": true,
+      "answer_length": 894
+    },
+    {
+      "request_id": 88,
+      "query": "Mandatory paperwork needed for employee personnel file",
+      "topic_name": "Mandatory Personnel Documents",
+      "latency_ms": 8.05,
+      "cache_hit": true,
+      "answer_length": 1171
+    },
+    {
+      "request_id": 89,
+      "query": "How often is nursing licensure verified for clinical triage staff?",
+      "topic_name": "Nurse Licensure Verification",
+      "latency_ms": 7656.68,
+      "cache_hit": false,
+      "answer_length": 740
+    },
+    {
+      "request_id": 90,
+      "query": "Is employment at TriageLogic at-will or under contract?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 15.81,
+      "cache_hit": true,
+      "answer_length": 836
+    },
+    {
+      "request_id": 91,
+      "query": "What is the required update frequency for personnel files?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 11.91,
+      "cache_hit": true,
+      "answer_length": 654
+    },
+    {
+      "request_id": 92,
+      "query": "What pre-employment screening is conducted on candidates?",
+      "topic_name": "Background Checks Requirements",
+      "latency_ms": 8.43,
+      "cache_hit": true,
+      "answer_length": 567
+    },
+    {
+      "request_id": 93,
+      "query": "HIPAA compliance training and signed statement requirement",
+      "topic_name": "HIPAA and Confidentiality Statement",
+      "latency_ms": 9588.07,
+      "cache_hit": false,
+      "answer_length": 700
+    },
+    {
+      "request_id": 94,
+      "query": "Frequency of performance evaluations for staff",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 9.5,
+      "cache_hit": true,
+      "answer_length": 507
+    },
+    {
+      "request_id": 95,
+      "query": "HIPAA compliance training and signed statement requirement",
+      "topic_name": "HIPAA and Confidentiality Statement",
+      "latency_ms": 7.51,
+      "cache_hit": true,
+      "answer_length": 700
+    },
+    {
+      "request_id": 96,
+      "query": "Frequency of performance evaluations for staff",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 10.21,
+      "cache_hit": true,
+      "answer_length": 507
+    },
+    {
+      "request_id": 97,
+      "query": "When do employee reviews happen at the company?",
+      "topic_name": "Performance Appraisals Frequency",
+      "latency_ms": 9541.61,
+      "cache_hit": false,
+      "answer_length": 879
+    },
+    {
+      "request_id": 98,
+      "query": "Is employment at TriageLogic at-will or under contract?",
+      "topic_name": "At-Will Employment Nature",
+      "latency_ms": 15.48,
+      "cache_hit": true,
+      "answer_length": 836
+    },
+    {
+      "request_id": 99,
+      "query": "How frequently is the personnel file checklist reviewed?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 11.12,
+      "cache_hit": true,
+      "answer_length": 444
+    },
+    {
+      "request_id": 100,
+      "query": "Personnel file checklist update requirement annually?",
+      "topic_name": "Personnel File Checklist Frequency",
+      "latency_ms": 11.41,
+      "cache_hit": true,
+      "answer_length": 998
+    }
+  ]
+}
