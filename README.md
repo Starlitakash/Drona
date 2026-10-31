@@ -241,7 +241,6 @@ I don't have enough information on that in our company records.
 ### Prerequisites
 - Python 3.11+
 - Git
-- Docker & Docker Compose (Optional)
 
 ### 1. Clone & Configure Environment
 ```bash
@@ -323,17 +322,13 @@ pytest evals/test_eval.py -v -s
 
 ---
 
-## 🐳 Docker Deployment
+## 💻 Zero-Cost Local & On-Demand Execution
 
-Drona is 100% cloud-native with zero local database dependencies. It connects directly to Qdrant Cloud, MongoDB Atlas, and Groq API.
+Drona is 100% cloud-native with zero local database dependencies. Because it uses **Slack Socket Mode**, the bot initiates an outbound WebSocket connection over HTTPS/WSS (Port 443) directly to Slack:
 
-```bash
-# Build and run container in detached mode
-docker compose up --build -d
-
-# Check live logs
-docker compose logs -f
-```
+- **No Public IP or Domain Needed**: Runs seamlessly from your local workstation or laptop behind standard firewalls and NAT.
+- **Zero Cloud Hosting Bills**: Connects directly to free-tier managed cloud backends (Qdrant Cloud, MongoDB Atlas, Groq Cloud API, Langfuse Cloud) with $0.00 idle costs.
+- **Instant Live Demos**: Run `python main.py --slack` on your workstation and interact with Drona live in Slack from your desktop or mobile app.
 
 ---
 
@@ -356,8 +351,6 @@ docker compose logs -f
 │   └── golden_dataset.json    # 40 Ground-Truth Enterprise Q&A Pairs
 ├── docs/                      # Enterprise Policies & Runbooks
 ├── main.py                    # Unified CLI Entry Point
-├── Dockerfile                 # Multi-stage Container Specification
-├── docker-compose.yml         # Container Orchestration
 └── requirements.txt           # Pinned Dependencies
 ```
 
