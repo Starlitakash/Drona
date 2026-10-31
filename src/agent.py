@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import re
-from typing import TypedDict, List, Optional, Dict, Any
+from typing import TypedDict, List, Optional, Dict, Any, Tuple
 from dotenv import load_dotenv
 
 if sys.platform == "win32":
@@ -68,6 +68,8 @@ class AgentState(TypedDict, total=False):
     guardrail_triggered: Optional[bool]
     cache_hit: Optional[bool]
     cache_matched_query: Optional[str]
+    is_multi_hop: Optional[bool]
+    sub_queries: Optional[List[str]]
 
 
 def extract_section_header(chunk_text: str, default: str = "General Provisions") -> str:
@@ -385,6 +387,52 @@ def jira_update_node(state: AgentState) -> Dict[str, Any]:
     return {"answer": answer}
 
 
+def decompose_multi_hop_query(query: str) -> Tuple[bool, List[str]]:
+    """
+    Analyzes whether a query contains multiple sub-questions or distinct informational goals (multi-hop).
+    If multi-hop, decomposes it into 2 atomic sub-queries for focused parallel retrieval.
+    Otherwise, returns (False, [query]).
+    """
+    clean_q = query.strip()
+    # Fast heuristic check before calling LLM:
+    connectors = [" and ", " as well as ", " also ", " along with ", " plus ", "? "]
+    has_connector = any(c in clean_q.lower() for c in connectors)
+    has_multiple_qmarks = clean_q.count("?") >= 2
+
+    if not (has_connector or has_multiple_qmarks) or len(clean_q.split()) < 7:
+        return False, [clean_q]
+
+    prompt = (
+        "You are an expert query decomposition engine for enterprise RAG.\n"
+        "Determine if the user query is a compound / multi-hop question that asks for two or more distinct pieces of information.\n"
+        "If it is compound, split it into 2 (at most 3) independent, clear sub-queries.\n"
+        "If it is a single unified question, do NOT split it.\n\n"
+        f"Query: {clean_q}\n\n"
+        "Return ONLY JSON in one of these two formats:\n"
+        '{"is_multi_hop": true, "sub_queries": ["Sub-query 1", "Sub-query 2"]}\n'
+        '{"is_multi_hop": false, "sub_queries": ["' + clean_q.replace('"', '\\"') + '"]}\n'
+        "Strictly valid JSON only."
+    )
+
+    try:
+        response = llm.invoke([
+            SystemMessage(content="You are a query analysis engine. Respond strictly in valid JSON."),
+            HumanMessage(content=prompt)
+        ])
+        raw_text = response.content.strip()
+        if "{" in raw_text:
+            json_str = raw_text[raw_text.find("{"):raw_text.rfind("}") + 1]
+            data = json.loads(json_str)
+            is_multi = bool(data.get("is_multi_hop", False))
+            sub_qs = data.get("sub_queries", [clean_q])
+            if is_multi and len(sub_qs) >= 2 and all(isinstance(s, str) and len(s) > 5 for s in sub_qs):
+                return True, sub_qs[:3]
+    except Exception as e:
+        print(f"[Multi-Hop Warning] Decomposition check skipped: {e}")
+
+    return False, [clean_q]
+
+
 def rag_retrieve_node(state: AgentState) -> Dict[str, Any]:
     """Checks semantic cache first, then retrieves top relevant chunks if cache miss."""
     question = state.get("question", "")
@@ -401,37 +449,65 @@ def rag_retrieve_node(state: AgentState) -> Dict[str, Any]:
             "documents": [],
             "guardrail_triggered": False,
             "cache_hit": True,
-            "cache_matched_query": cached.get("matched_query")
+            "cache_matched_query": cached.get("matched_query"),
+            "is_multi_hop": False
         }
 
-    # 2. Cache Miss: Execute Hybrid Retrieval (Dense Vector + BM25)
-    docs = search_knowledge_base(question, limit=5)
+    # 2. Check for Multi-Hop / Compound Query Decomposition
+    is_multi, sub_queries = decompose_multi_hop_query(question)
 
-    # Attach section header to each retrieved doc
-    for d in docs:
-        d["section_header"] = extract_section_header(d.get("text", ""))
+    if is_multi:
+        print(f"[Multi-Hop Engine] Detected compound query. Decomposing into {len(sub_queries)} hops:")
+        hop_docs: List[dict] = []
+        seen_texts = set()
+
+        for i, sub_q in enumerate(sub_queries):
+            print(f"  -> Hop {i + 1}: '{sub_q}'")
+            sub_hits = search_knowledge_base(sub_q, limit=3)
+            added_for_hop = 0
+            for d in sub_hits:
+                text_key = d.get("text", "")[:100]
+                if text_key not in seen_texts:
+                    seen_texts.add(text_key)
+                    d_copy = dict(d)
+                    d_copy["hop_query"] = sub_q
+                    d_copy["section_header"] = extract_section_header(d_copy.get("text", ""))
+                    hop_docs.append(d_copy)
+                    added_for_hop += 1
+                if added_for_hop >= 2:
+                    break
+
+        docs = hop_docs[:4]  # Balanced multi-topic context across hops
+        print(f"[Multi-Hop Engine] Combined {len(docs)} chunks covering all {len(sub_queries)} hops.")
+    else:
+        # Single-Hop Standard Retrieval
+        docs = search_knowledge_base(question, limit=5)
+        for d in docs:
+            d["section_header"] = extract_section_header(d.get("text", ""))
 
     # Check rerank score threshold (Anti-Hallucination Guardrail)
-    top_score = docs[0].get("rerank_score", -99.0) if docs else -99.0
+    top_score = max((d.get("rerank_score", -99.0) for d in docs), default=-99.0)
     if not docs or top_score < RERANK_THRESHOLD:
         print(f"[Guardrail Check] Top score {top_score:+.4f} < threshold {RERANK_THRESHOLD}. Triggering anti-hallucination guardrail.")
         return {
             "documents": [],
             "guardrail_triggered": True,
-            "cache_hit": False
+            "cache_hit": False,
+            "is_multi_hop": is_multi,
+            "sub_queries": sub_queries
         }
 
-    # Dynamic Context Pruning based on Cross-Encoder Reranker Confidence:
-    # If the top chunk has high confidence (rerank_score >= 1.5), pass only top 2 chunks
-    # instead of 5 to cut prompt tokens by >60% and improve generation speed.
-    if len(docs) > 2 and top_score >= 1.5:
+    # Dynamic Context Pruning (for single-hop queries on high confidence)
+    if not is_multi and len(docs) > 2 and top_score >= 1.5:
         print(f"[Dynamic Pruning] Top score {top_score:+.2f} >= 1.5 (High Confidence). Pruned context from {len(docs)} chunks down to 2 chunks to save tokens.")
         docs = docs[:2]
 
     return {
         "documents": docs,
         "guardrail_triggered": False,
-        "cache_hit": False
+        "cache_hit": False,
+        "is_multi_hop": is_multi,
+        "sub_queries": sub_queries
     }
 
 
@@ -458,7 +534,8 @@ def rag_generate_node(state: AgentState) -> Dict[str, Any]:
         sec = d.get("section_header", "General Provisions")
         cat = d.get("category", "General")
         cid = d.get("chunk_id", "")
-        context_text += f"\n--- Document: {src} | Section: {sec} | Category: {cat} | Chunk: {cid} ---\n{d.get('text', '')}\n"
+        hop_info = f" | Target Sub-Question: {d.get('hop_query')}" if d.get("hop_query") else ""
+        context_text += f"\n--- Document: {src} | Section: {sec}{hop_info} | Category: {cat} | Chunk: {cid} ---\n{d.get('text', '')}\n"
         if src not in citations_dict:
             citations_dict[src] = []
         if sec not in citations_dict[src]:
@@ -478,6 +555,9 @@ Response Structure & Styling Rules:
 3. Citations: At the end, always include a clean source section:
    📚 Sources Cited:
    - Document-Name.pdf (Section: Section Name)"""
+
+    if state.get("is_multi_hop"):
+        system_prompt += "\n\n4. Multi-Hop Requirement:\nThe user's question contains multiple distinct sub-questions. Address each part thoroughly under its own clear heading or bullet point section so no part of the query is missed."
 
     history_text = state.get("chat_history", "").strip()
     history_block = f"Recent Thread Conversation History:\n{history_text}\n\n" if history_text else ""
